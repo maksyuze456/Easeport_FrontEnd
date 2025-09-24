@@ -2,11 +2,11 @@
 
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Group, Table, Text, Badge } from '@mantine/core';
-import { useEmployees } from '../../../_context/EmployeeProvider';
+import { User, useEmployees } from '../../../_context/EmployeeProvider';
 
 
 
-export function UsersTable() {
+export function UsersTable({ onEditUser } : { onEditUser?: (user?: User ) => void }) {
   const { employees, refetch } = useEmployees();
 
   if(!employees) return <div>Loading employees...</div>
@@ -31,7 +31,11 @@ export function UsersTable() {
 
       <Table.Td>
         <Group gap={0} justify="flex-end">
-          <ActionIcon variant="subtle" color="gray">
+          <ActionIcon 
+            variant="subtle"
+            color="gray"
+            onClick={() => onEditUser?.(employee)}
+            >
             <IconPencil size={16} stroke={1.5} />
           </ActionIcon>
           <ActionIcon variant="subtle" color="red">

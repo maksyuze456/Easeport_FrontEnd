@@ -5,12 +5,15 @@ import { UsersTable } from "./UsersTable";
 import { IconUserPlus } from '@tabler/icons-react';
 import AddForm from "../../../_components/AddForm";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEmployees } from '../../../_context/EmployeeProvider';
+import { useEmployees, User } from '../../../_context/EmployeeProvider';
+import { useState } from "react";
+import UpdateForm from "./UpdateForm";
 
 export default function EmployeesPage() {
   const searchParams = useSearchParams();
   const view = searchParams.get("view") || "list";
   const router = useRouter();
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const { refetch } = useEmployees();
   
   const handleUserAdded = async () => {
@@ -33,8 +36,14 @@ export default function EmployeesPage() {
 
     </Group>
     <Center>
-      {view === 'list' && <UsersTable/>}
+      {view === 'list' && <UsersTable
+        onEditUser={(user) => {
+          setSelectedUser(user);
+          router.push("/dashboard/admin/employees?view=update")
+        }}
+      />}
       {view === 'add' && <AddForm onUserAdded={handleUserAdded}/>}
+      {view === 'update' && <UpdateForm onUserAdded={handleUserAdded} user={selectedUser}/>}
     </Center>
   </div>
 }

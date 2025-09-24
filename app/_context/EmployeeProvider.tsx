@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type User = {
+ export type User = {
     id: number,
     username: string;
     email: string;
