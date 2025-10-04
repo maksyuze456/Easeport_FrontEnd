@@ -33,7 +33,7 @@ export default function UpdateForm( {onUserAdded, user} :  { onUserAdded?: () =>
             <IconEyeCheck style={{ width: 'var(--psi-icon-size)', height: 'var(--psi-icon-size)' }} />
     );
     const handleSubmit = async (values: typeof form.values, e? : React.FormEvent) => {
-        e.preventDefault();
+        e?.preventDefault();
         try {
             const values = form.getValues();
             const res = await fetch("http://localhost:8080/api/admin/users/update", {

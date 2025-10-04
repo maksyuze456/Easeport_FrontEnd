@@ -1,0 +1,89 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  IconBellRinging,
+  IconDatabaseImport,
+  IconFingerprint,
+  IconChartBar,
+  IconLogout,
+  IconTicket,
+  IconSettings,
+  IconSwitchHorizontal,
+  IconBriefcase2
+} from '@tabler/icons-react';
+import { Code, Group } from '@mantine/core';
+import classes from './NavbarSimple.module.css';
+import { useRouter, usePathname } from 'next/navigation';
+
+const data = [
+  { link: '', label: 'Notifications', icon: IconBellRinging },
+  { link: '/dashboard/employee/tickets', label: 'Tickets', icon: IconTicket },
+  { link: '/dashboard/employee/my_tickets', label: 'My Tickets', icon: IconBriefcase2 },
+  { link: '', label: 'Statistics', icon: IconChartBar },
+  { link: '', label: 'Security', icon: IconFingerprint },
+  { link: '', label: 'Databases', icon: IconDatabaseImport },
+  { link: '', label: 'Other Settings', icon: IconSettings },
+];
+
+export function NavbarSimple() {
+  const [active, setActive] = useState('Billing');
+  const router = useRouter();
+  const pathname = usePathname();
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try{
+      const res = await fetch("http://localhost:8080/api/auth/logout", {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error("Error on logout");
+      router.push("/login");
+    } catch(err) {
+      console.log(err);
+    }
+  };
+  const links = data.map((item) => {
+    const isAstive = pathname === item.link;
+    return(
+      <a
+      className={classes.link}
+      data-active={isAstive || undefined}
+      href={item.link}
+      key={item.label}
+      onClick={(event) => {
+        event.preventDefault();
+        if(item.link) router.push(item.link);
+        setActive(item.label);
+      }}
+    >
+      <item.icon className={classes.linkIcon} stroke={1.5} />
+      <span>{item.label}</span>
+    </a>
+    )
+  });
+
+  return (
+    <nav className={classes.navbar}>
+      <div className={classes.navbarMain}>
+        <Group className={classes.header} justify="space-between">
+          <span>Logo</span>
+          <Code fw={700}>v0.1.0</Code>
+        </Group>
+        {links}
+      </div>
+
+      <div className={classes.footer}>
+        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
+          <span>Change account</span>
+        </a>
+
+        <a href="#" className={classes.link} onClick={handleLogout}>
+          <IconLogout className={classes.linkIcon} stroke={1.5} />
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+  );
+}

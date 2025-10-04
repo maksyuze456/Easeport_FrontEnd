@@ -1,31 +1,13 @@
 'use client';
 
 import { Container, Grid } from '@mantine/core';
-import { NavbarSegmented } from '../../_components/NavbarSegmented';
+import { NavbarSegmented } from '../../_components/NavBarSegmented/NavbarSegmented';
 import { EmployeeProvider } from '../../_context/EmployeeProvider';
 
-
-
-type DashboardLayoutProps = {
-  children: React.ReactNode;
-};
-
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <EmployeeProvider>
-      <Container my="md" fluid>
-        <Grid gutter="md">
-          {/* Navbar column */}
-          <Grid.Col span={{ base: 12, sm: 3, md: 2 }}>
-            <NavbarSegmented/>
-          </Grid.Col>
-
-          {/* Main content column */}
-          <Grid.Col span={{ base: 12, sm: 9, md: 10 }}>
-            {children}
-          </Grid.Col>
-        </Grid>
-      </Container>
+     {children}
     </EmployeeProvider>
   );
 }

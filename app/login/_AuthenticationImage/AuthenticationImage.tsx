@@ -15,11 +15,16 @@ import { useRouter } from 'next/navigation';
 
 export function AuthenticationImage() {
     const router = useRouter();
+    const [IsLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (IsLoading) return;
+        setIsLoading(true);
+
 
         try {
             const res = await fetch('http://localhost:8080/api/auth/signin', {
@@ -39,6 +44,8 @@ export function AuthenticationImage() {
             };
         } catch (e) {
             console.log(e);
+        } finally {
+          setIsLoading(false);
         }
 
 
@@ -72,8 +79,14 @@ export function AuthenticationImage() {
 
           <Checkbox label="Keep me logged in" mt="xl" size="md" />
 
-          <Button type="submit" fullWidth mt="xl" size="md" radius="md">
-            Login
+          <Button
+            type="submit"
+            fullWidth mt="xl"
+            size="md" radius="md"
+            loading={IsLoading}
+            disabled={IsLoading || !username.trim() || !password.trim()}
+            >
+            {IsLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
 

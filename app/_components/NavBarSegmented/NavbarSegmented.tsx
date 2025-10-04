@@ -45,27 +45,9 @@ const tabs = {
 export function NavbarSegmented() {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<{ username: string; email: string } | null>(null);
   const [section, setSection] = useState<'account' | 'general'>('account');
   const [active, setActive] = useState('Billing');
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch('http://localhost:8080/api/admin/me', {
-          credentials: 'include', // 🔑 send the cookie
-        });
-
-        if (!res.ok) throw new Error('Not authenticated');
-
-        const data = await res.json();
-        setUser(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
@@ -79,7 +61,6 @@ export function NavbarSegmented() {
       console.log(err);
     }
   };
-  if (!user) return <p>Loading...</p>;
   const links = tabs[section].map((item) => {
     const isAstive = pathname === item.link;
 
@@ -104,12 +85,6 @@ export function NavbarSegmented() {
   return (
     <nav className={classes.navbar}>
       <div>
-        <Text fw={500} size="sm" className={classes.title} c="dimmed" mb="xs">
-          {user.username}
-        </Text>
-        <Text fw={500} size="sm" className={classes.title} c="dimmed" mb="xs">
-          {user.email}
-        </Text>
 
         <SegmentedControl
           value={section}
