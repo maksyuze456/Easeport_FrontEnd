@@ -68,7 +68,6 @@ export default function ViewTicket({
   let row;
 
   if (ticket) {
-    console.log(ticket);
     row = () => (
     <>
       <Table.Tr>
@@ -85,6 +84,14 @@ export default function ViewTicket({
         </Table.Td>
         <Table.Td>
           <Text fz="sm">{ticket.from}</Text>
+        </Table.Td>
+      </Table.Tr>
+      <Table.Tr>
+        <Table.Td>
+          <Text fz="sm" fw={500}>Name</Text>
+        </Table.Td>
+        <Table.Td>
+          <Text fz="sm">{ticket.name}</Text>
         </Table.Td>
       </Table.Tr>
       <Table.Tr>

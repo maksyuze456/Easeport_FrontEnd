@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from './EmployeeProvider';
+import { NextResponse } from 'next/server';
 
 export type LoggedInUser = {
     id: number
@@ -24,19 +25,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const fetchUser = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/auth/me", {
+            const response = await fetch("http://localhost:8080/api/auth/me", {
                 method: 'GET',
                 credentials: 'include'
             });
-            if(!res.ok){
+            if(!response.ok){
                 setLoggedInUser(null);
                 setLoadingAuth(false);
-                throw new Error("Error while fetching logged in user: " + res.status);
+                throw new Error("Error while fetching logged in user: " + response.status);
             } 
                 
 
-            const data = await res.json();
+            const data = await response.json();
             setLoggedInUser(data);
+            if(data?.role) {
+                document.cookie = `role=${data.role}; path=/; samesite=lax`;
+                console.log(document.cookie);
+            };
             setLoadingAuth(false);
 
         } catch(err) {

@@ -55,7 +55,7 @@ export function AuthenticationImage() {
     <div className={classes.wrapper}>
       <Paper className={classes.form}>
         <Title order={2} className={classes.title}>
-          Welcome back to Mantine!
+          Welcome back to Easeport!
         </Title>
         <form onSubmit={handleLogin}>
           <TextInput
@@ -89,13 +89,6 @@ export function AuthenticationImage() {
             {IsLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
-
-        <Text ta="center" mt="md">
-          Don&apos;t have an account?{' '}
-          <Anchor href="#" fw={500} onClick={(event) => event.preventDefault()}>
-            Register
-          </Anchor>
-        </Text>
       </Paper>
     </div>
   );

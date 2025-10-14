@@ -7,7 +7,6 @@ import { NavbarSimple } from "../_components/NavbarSimple/NavbarSimple";
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
-import { FooterLinks } from '../_components/FooterLinks/FooterLinks';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

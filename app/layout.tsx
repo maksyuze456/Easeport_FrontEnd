@@ -10,7 +10,7 @@ import { AuthProvider } from "./_context/AuthProvider";
 
 export const metadata = {
   title: "Easeport",
-  description: "I am using Mantine with Next.js!",
+  description: "",
 };
 
 export default function RootLayout({ children }: { children: any }) {

@@ -32,13 +32,7 @@ const tabs = {
     { link: '', label: 'Other Settings', icon: IconSettings },
   ],
   general: [
-    { link: '', label: 'Orders', icon: IconShoppingCart },
-    { link: '', label: 'Receipts', icon: IconLicense },
-    { link: '', label: 'Reviews', icon: IconMessage2 },
-    { link: '', label: 'Messages', icon: IconMessages },
     { link: '/dashboard/admin/employees', label: 'Employees', icon: IconUsers },
-    { link: '', label: 'Refunds', icon: IconReceiptRefund },
-    { link: '', label: 'Files', icon: IconFileAnalytics },
   ],
 };
 
