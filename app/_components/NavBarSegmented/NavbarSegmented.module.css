@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&display=swap');
+
 .navbar {
   background-color: var(--mantine-color-body);
   height: 100%;
@@ -6,6 +8,12 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.logo {
+  font-family: 'BBH Sans Bogle';
+  padding-left: 12px;
+  padding-bottom: 10px;
 }
 
 .navbarMain {

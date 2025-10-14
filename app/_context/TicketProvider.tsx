@@ -69,7 +69,6 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
             if(!res.ok) throw new Error("Error while fetching tickets. Errormessage: " + await res.json());
     
             const data = await res.json();
-            console.log(data);
             setTickets(data);
             setCurrentStatus(ticketStatus);
         } catch(err) {
@@ -105,7 +104,6 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
             if(!res.ok) throw new Error("Error while fetching tickets. Error message: " + await res.json());
     
             const data = await res.json();
-            console.log(data);
             setMyTickets(data);
             
         } catch(err) {
@@ -122,7 +120,6 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
             });
 
             const data = await res.json();
-            console.log(data);
             fetchTickets(currentStatus);
 
         } catch(err) {

@@ -15,9 +15,9 @@ import { useRouter } from 'next/router';
 
 type TicketsTableProps = {
   ticketStatus: TicketStatus;
-  myTickets?: Ticket[] | null;                 // optional, defaults to all tickets from context if not provided
-  onUpdate: () => void;      // optional callback
-  menuActions?: {                     // optional custom menu actions
+  myTickets?: Ticket[] | null;                 // default empty ticket table if not provided
+  onUpdate: () => void;                        // callback
+  menuActions?: {                              // optional custom menu actions
     label: string;
     icon: React.ReactNode;
     onClick: (ticket: Ticket) => void;

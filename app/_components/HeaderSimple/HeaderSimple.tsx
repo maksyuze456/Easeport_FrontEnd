@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import { Burger, Container, Group, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+'use client';
 
+import { useState } from 'react';
+import { Burger, Container, Group, Flex } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 import classes from './HeaderSimple.module.css';
 
 const links = [
-  { link: '', label: 'Features' },
-  { link: '', label: 'Pricing' },
-  { link: '', label: 'Learn' },
-  { link: '', label: 'Community' },
+  { link: '/dashboard', label: 'Features' },
 ];
 
 export function HeaderSimple() {
   const [opened, { toggle }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
-
+  const router = useRouter();
   const items = links.map((link) => (
     <a
       key={link.label}
@@ -23,7 +22,9 @@ export function HeaderSimple() {
       data-active={active === link.link || undefined}
       onClick={(event) => {
         event.preventDefault();
+        router.push(active);
         setActive(link.link);
+
       }}
     >
       {link.label}
@@ -33,7 +34,14 @@ export function HeaderSimple() {
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
-        <Text fz="sm" fw={500}>Easeport</Text>
+        <Flex
+          className={classes.logo}
+          >            
+          <span>Ease</span>
+          <span style={{
+            color: '#228BE6'
+          }}>Port</span>
+          </Flex>
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>

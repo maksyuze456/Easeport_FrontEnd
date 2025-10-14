@@ -18,18 +18,12 @@ import {
   IconSwitchHorizontal,
   IconUsers,
 } from '@tabler/icons-react';
-import { SegmentedControl, Text } from '@mantine/core';
+import { SegmentedControl, Flex, Code } from '@mantine/core';
 import classes from './NavbarSegmented.module.css';
 import { useRouter, usePathname } from 'next/navigation';
 const tabs = {
   account: [
-    { link: '', label: 'Notifications', icon: IconBellRinging },
-    { link: '', label: 'Billing', icon: IconReceipt2 },
-    { link: '', label: 'Security', icon: IconFingerprint },
-    { link: '', label: 'SSH Keys', icon: IconKey },
-    { link: '', label: 'Databases', icon: IconDatabaseImport },
-    { link: '', label: 'Authentication', icon: Icon2fa },
-    { link: '', label: 'Other Settings', icon: IconSettings },
+    { link: '', label: 'Settings', icon: IconSettings },
   ],
   general: [
     { link: '/dashboard/admin/employees', label: 'Employees', icon: IconUsers },
@@ -79,7 +73,19 @@ export function NavbarSegmented() {
   return (
     <nav className={classes.navbar}>
       <div>
-
+          <Flex
+          direction={'row'}
+          justify={'space-between'}
+          className={classes.logo}
+          >
+            <div>  
+            <span>Ease</span>
+            <span style={{
+              color: '#228BE6'
+            }}>Port</span>
+            </div>            
+          <Code fw={700}>v0.1.0</Code>
+          </Flex>
         <SegmentedControl
           value={section}
           onChange={(value: any) => setSection(value)}

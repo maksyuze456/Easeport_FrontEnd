@@ -12,18 +12,13 @@ import {
   IconSwitchHorizontal,
   IconBriefcase2
 } from '@tabler/icons-react';
-import { Code, Group } from '@mantine/core';
+import { Code, Flex, Group } from '@mantine/core';
 import classes from './NavbarSimple.module.css';
 import { useRouter, usePathname } from 'next/navigation';
 
 const data = [
-  { link: '', label: 'Notifications', icon: IconBellRinging },
   { link: '/dashboard/employee/tickets', label: 'Tickets', icon: IconTicket },
   { link: '/dashboard/employee/my_tickets', label: 'My Tickets', icon: IconBriefcase2 },
-  { link: '', label: 'Statistics', icon: IconChartBar },
-  { link: '', label: 'Security', icon: IconFingerprint },
-  { link: '', label: 'Databases', icon: IconDatabaseImport },
-  { link: '', label: 'Other Settings', icon: IconSettings },
 ];
 
 export function NavbarSimple() {
@@ -67,7 +62,14 @@ export function NavbarSimple() {
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
-          <span>Logo</span>
+          <Flex
+          className={classes.logo}
+          >            
+          <span>Ease</span>
+          <span style={{
+            color: '#228BE6'
+          }}>Port</span>
+          </Flex>
           <Code fw={700}>v0.1.0</Code>
         </Group>
         {links}
