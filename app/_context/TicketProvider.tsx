@@ -77,7 +77,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     };
 
     const fetchTicket = async (ticketId : number) => {
-
+        
         try {
             const res = await fetch(`http://localhost:8080/api/tickets/${ticketId}`, {
                 method: 'GET',

@@ -1,21 +1,24 @@
 'use client';
+import React from 'react';
 import { Center, Notification, Text, Button, Box, LoadingOverlay } from "@mantine/core";
 import { useAuthContext } from "../../../../_context/AuthProvider";
 import { Answer, Message, useTickets } from "../../../../_context/TicketProvider";
 import ViewTicket from "./ViewTicket";
 import { IconX, IconCheck } from '@tabler/icons-react';
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from 'react';
+import { useParams, useRouter } from "next/navigation";
+import { use, useEffect, useState } from 'react';
 
-export default function ViewTicketPage({ params }: { params: { ticketId: number } }) {
-    const ticketId = params.ticketId;
+export default function ViewTicketPage() {
+    const params = useParams();
+    const ticketId = Number(params.ticketId);
     const { loggedInUser } = useAuthContext();
     const { singleTicket, refetchSingleTicket } = useTickets();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const [responseMessage, setResponseMessage] = useState<Answer | null>(null);
     const [showNotification, setShowNotification] = useState(false);
+    const condition = singleTicket?.id !== ticketId;
 
     const handleSuccess = (res: Answer) => {
         setResponseMessage(res);
@@ -30,7 +33,7 @@ export default function ViewTicketPage({ params }: { params: { ticketId: number 
     };
 
     useEffect(() => {
-        if (singleTicket?.id !== ticketId) {
+        if (condition) {
             setLoading(true);
             refetchSingleTicket(ticketId);
             setTimeout(() => setLoading(false), 500);

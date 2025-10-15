@@ -6,7 +6,7 @@ import { Badge, Table, Text, Textarea , Flex, Button } from '@mantine/core';
 import { priorityColors, ticketStatusColors } from "../../_TicketsTable/TicketsTable";
 import { IconX, IconCheck } from '@tabler/icons-react';
 import { useRouter } from "next/navigation";
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 
 export default function ViewTicket({
@@ -22,6 +22,7 @@ export default function ViewTicket({
   const checkIcon = <IconCheck size={20} />;
   const xIcon = <IconX size={20} />;
   const isClosed = ticket.status?.toLowerCase() === 'closed';
+  const prevTicketId = useRef<number | null>(null);
 
   const form = useForm({
     mode: 'controlled',
@@ -29,6 +30,13 @@ export default function ViewTicket({
       message: ticket.answer || ""
     }
   });
+
+  useEffect(() => {
+    if(prevTicketId.current !== ticket.id) {
+      form.setValues({ message: ticket.answer || "" });
+      prevTicketId.current = ticket.id;
+    }
+  }), [ticket.id];
 
   const handleSubmit = async (values: typeof form.values, e?: React.FormEvent) => {
     e?.preventDefault();
