@@ -35,11 +35,11 @@ export function NavbarSegmented() {
   const pathname = usePathname();
   const [section, setSection] = useState<'account' | 'general'>('account');
   const [active, setActive] = useState('Billing');
-  
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
-      const res = await fetch("http://localhost:8080/api/auth/logout", {
+      const res = await fetch(`${apiUrl}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });

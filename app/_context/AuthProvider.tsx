@@ -1,7 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from './EmployeeProvider';
-import { NextResponse } from 'next/server';
 
 export type LoggedInUser = {
     id: number
@@ -22,10 +21,11 @@ const AuthContext = createContext<{
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const fetchUser = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/auth/me", {
+            const response = await fetch(`${apiUrl}/api/auth/me`, {
                 method: 'GET',
                 credentials: 'include'
             });

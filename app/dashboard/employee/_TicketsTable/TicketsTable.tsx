@@ -11,7 +11,6 @@ import {
 import { ActionIcon, Badge, Group, Menu, Table, Text, Notification } from '@mantine/core';
 import { Ticket, TicketStatus, useTickets } from '../../../_context/TicketProvider'
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 type TicketsTableProps = {
   ticketStatus: TicketStatus;
@@ -130,11 +129,6 @@ export default function TicketsTable({
                       onUpdate?.();
                     }
                   },
-                  {
-                    label: 'Terminate contract',
-                    icon: <IconTrash size={16} />,
-                    onClick: () => {}
-                  }
                 ]).map(action => (
                   <Menu.Item
                     key={action.label}

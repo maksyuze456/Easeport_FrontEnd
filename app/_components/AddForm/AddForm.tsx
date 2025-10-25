@@ -20,7 +20,7 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
         }
     });
-
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const [visible, { toggle }] = useDisclosure(false);
 
     const VisibilityToggleIcon = ({ reveal }: { reveal: boolean }) =>
@@ -33,7 +33,7 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
         e.preventDefault();
         try {
             const values = form.getValues();
-            const res = await fetch("http://localhost:8080/api/admin/users", {
+            const res = await fetch(`${apiUrl}/api/admin/users`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

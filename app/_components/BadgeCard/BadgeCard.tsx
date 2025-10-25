@@ -1,7 +1,6 @@
 'use client';
 
-import { IconHeart } from '@tabler/icons-react';
-import { ActionIcon, Badge, Button, Card, CardSection, Group, Image, Text } from '@mantine/core';
+import { Badge, Card, CardSection, Group, Image, Text } from '@mantine/core';
 import classes from './BadgeCard.module.css';
 
 type CardProps = {

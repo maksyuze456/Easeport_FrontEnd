@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 export default function UpdateForm( {onUserAdded, user} :  { onUserAdded?: () => void, user?: User } ) {
     const [changePassword, setChangePassword] = useState(false);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
@@ -36,7 +37,7 @@ export default function UpdateForm( {onUserAdded, user} :  { onUserAdded?: () =>
         e?.preventDefault();
         try {
             const values = form.getValues();
-            const res = await fetch("http://localhost:8080/api/admin/users/update", {
+            const res = await fetch(`${apiUrl}/api/admin/users/update`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {

@@ -52,6 +52,9 @@ export default function TicketsPage() {
         {status === 'Open' && (
           <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned}/>
         )}
+        {status === 'Closed' && (
+          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned}/>
+        )}
       </Center>
     </div>
     );

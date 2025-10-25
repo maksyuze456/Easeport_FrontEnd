@@ -19,10 +19,10 @@ const EmployeeContext = createContext<{
 export function EmployeeProvider({ children }: { children: React.ReactNode }) {
 
     const [employees, setEmployees] = useState<User[] | null>(null);
-
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const fetchEmployees = async () => {
         try {
-            const res = await fetch("http://localhost:8080/api/admin/users", {
+            const res = await fetch(`${apiUrl}/api/admin/users`, {
                 method: 'GET',
                 credentials: 'include'
             });

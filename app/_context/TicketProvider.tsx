@@ -58,11 +58,11 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const [currentStatus, setCurrentStatus] = useState<TicketStatus>('Open');
     const [myTickets, setMyTickets] = useState<Ticket[] | null>(null);
     const [singleTicket, setSingleTicket] = useState<Ticket>();
-
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const fetchTickets = async (ticketStatus: TicketStatus) => {
         
         try{
-            const res = await fetch(`http://localhost:8080/api/tickets/getAllByStatus/${ticketStatus}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/getAllByStatus/${ticketStatus}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -79,7 +79,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const fetchTicket = async (ticketId : number) => {
         
         try {
-            const res = await fetch(`http://localhost:8080/api/tickets/${ticketId}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/${ticketId}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -97,7 +97,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const fetchMyTickets = async (ticketStatus: TicketStatus) => {
         
         try{
-            const res = await fetch(`http://localhost:8080/api/tickets/employeeTickets?status=${ticketStatus}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/employeeTickets?status=${ticketStatus}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -114,7 +114,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const fetchAssignTicket = async(ticketId: number) => {
 
         try {
-            const res = await fetch(`http://localhost:8080/api/tickets/assign/${ticketId}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/assign/${ticketId}`, {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -133,7 +133,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const fetchSetAnswer = async (answer: Answer, ticketId: number): Promise<Answer> => {
         
         try{
-            const res = await fetch(`http://localhost:8080/api/tickets/setAnswer/${ticketId}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/setAnswer/${ticketId}`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -159,7 +159,7 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const fetchCloseTicket = async (ticketId: number) => {
 
         try {
-            const res = await fetch(`http://localhost:8080/api/tickets/close/${ticketId}`, {
+            const res = await fetch(`${apiUrl}/api/tickets/close/${ticketId}`, {
                 method: 'PUT',
                 credentials: 'include'
             });
