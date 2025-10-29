@@ -5,6 +5,9 @@ import { Burger, Container, Group, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import classes from './HeaderSimple.module.css';
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const links = [
   { link: '/dashboard', label: 'Features' },
@@ -44,14 +47,17 @@ export function HeaderSimple() {
           }}
           style={{ cursor: 'pointer' }}
         >
-          <span>Ease</span>
-          <span
-            style={{
-              color: '#228be6ff',
-            }}
-          >
-            Port
-          </span>
+          <div className="flex flex-1 items-center">
+                      <span className={`${inter.className} text-md md:text-xl font-bold leading-none tracking-tight`}>Ease</span>
+                      <span
+                        className={`${inter.className} text-md md:text-xl font-bold leading-none tracking-tight`}
+                        style={{
+                          color: '#228be6ff',
+                        }}
+                      >
+                        Port
+                      </span>
+          </div>
         </Flex>
         <Group gap={5} visibleFrom="xs">
           {items}

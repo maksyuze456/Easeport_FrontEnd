@@ -144,48 +144,7 @@ export default function ViewTicket({
           <Text fz="sm">{ticket.body}</Text>
         </Table.Td>
       </Table.Tr>
-      <Text fz="sm" ml={"xs"} mt={"xs"} fw={500}>Answer</Text>
-      <Table.Tr>
-        <Table.Td colSpan={2}>
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Textarea
-                styles={{
-                    input: { 
-                    width: "100%", 
-                    height: "200px",
-                    resize: "vertical" // optional: allow vertical resizing
-                    },
-                    wrapper: { 
-                    width: "100%" 
-                    }
-                }}
-                required
-                placeholder="Enter answer"
-                key={form.key('message')}
-                {...form.getInputProps('message')}
-                disabled={isClosed}
-                />
-                <Flex
-                    justify="space-around"
-                >
-                    <Button type="submit"  mt="xl" size="s" radius="md" disabled={isClosed}>
-                    Update
-                    </Button>
-                    <Button
-                        variant="default" 
-                        mt="xl" 
-                        size="s" 
-                        radius="md"
-                        color="black"
-                        onClick={() => handleCloseTicket(ticket.id)}
-                        disabled={isClosed}
-                        >
-                    Close
-                    </Button>
-                </Flex>
-            </form>
-        </Table.Td>
-      </Table.Tr>
+      
     </>
   );} else {
     row = () => (

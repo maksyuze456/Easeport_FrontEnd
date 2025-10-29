@@ -10,6 +10,9 @@ import {
 import { Code, Flex, Group } from '@mantine/core';
 import classes from './NavbarSimple.module.css';
 import { useRouter, usePathname } from 'next/navigation';
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 const data = [
   { link: '/dashboard/employee/tickets', label: 'Tickets', icon: IconTicket },
@@ -57,17 +60,17 @@ export function NavbarSimple() {
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
-        <Group className={classes.header} justify="space-between">
-          <Flex
-          className={classes.logo}
-          >            
-          <span>Ease</span>
-          <span style={{
-            color: '#228BE6'
-          }}>Port</span>
-          </Flex>
-          <Code fw={700}>v0.1.0</Code>
-        </Group>
+        <div className="flex flex-1 items-center mb-6">
+                      <span className={`${inter.className} text-md md:text-xl font-bold leading-none tracking-tight`}>Ease</span>
+                      <span
+                        className={`${inter.className} text-md md:text-xl font-bold leading-none tracking-tight`}
+                        style={{
+                          color: '#228be6ff',
+                        }}
+                      >
+                        Port
+                      </span>
+          </div>
         {links}
       </div>
 
