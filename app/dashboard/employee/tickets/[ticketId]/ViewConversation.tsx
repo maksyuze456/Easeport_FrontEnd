@@ -2,7 +2,9 @@ import { Box, Paper, Text, ScrollArea, Button, Textarea, Flex } from '@mantine/c
 import { useParams } from 'next/navigation';
 import { useForm } from "@mantine/form";
 import { Answer, Message, useTickets } from "../../../../_context/TicketProvider";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useAuthContext } from '@/app/_context/AuthProvider';
+import { IconX } from '@tabler/icons-react';
 
 interface TicketMessage {
     ticketMessageId: number;
@@ -23,11 +25,18 @@ export default function ConversationTable({
 }) {
     const params = useParams();
     const ticketId = Number(params.ticketId);
-    const currentUser = "support@easeport.com"; // This should come from your auth context
-    const { setAnswer, refetchSingleTicket, singleTicket, closeTicket } = useTickets();
+    const { loggedInUser } = useAuthContext();
+    const { setAnswer, refetchSingleTicket, singleTicket, closeTicket, sendAnswer } = useTickets();
+    const [ticketConversation, setTicketConversation] = useState<TicketMessage[]>([]);
+    const [loadingConversation, setLoadingConversation] = useState(false);
+    const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);
+    const [showReplyHighlight, setShowReplyHighlight] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const prevTicketId = useRef<number | null>(null);
     const isClosed = singleTicket?.status?.toLowerCase() === 'closed';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
+    const currentUser = "maksy123@gmail.com"; // This should come from your auth context loggedInUser?.username;
     const form = useForm({
         mode: 'controlled',
         initialValues: {
@@ -47,11 +56,19 @@ export default function ConversationTable({
         if (isClosed) return;
         try {
             const answer: Answer = form.getValues();
-            const resMessage = await setAnswer(answer, ticketId);
+            const resAnswerMessage = await setAnswer(answer, ticketId);
             refetchSingleTicket(ticketId);
+            
+            let resSendMessage;
+
+            if(replyTo != null) {
+                resSendMessage = await sendAnswer(ticketId, replyTo.ticketMessageId);
+            } else {
+                resSendMessage = await sendAnswer(ticketId);
+            }
 
             if(onSuccess) {
-                onSuccess(resMessage);
+                onSuccess(resSendMessage);
             }
 
         } catch (err) {
@@ -73,45 +90,50 @@ export default function ConversationTable({
         }
     };
 
-    // Test data
-    const messages: TicketMessage[] = [
-        {
-            ticketMessageId: 1,
-            ticketId: ticketId,
-            sender: "customer@example.com",
-            body: "Hi, I'm having issues with my account login. Can you help?",
-            localDateTime: "2025-10-29T10:00:00",
-            emailMessageId: "msg_001",
-            inReplyTo: null
-        },
-        {
-            ticketMessageId: 2,
-            ticketId: ticketId,
-            sender: "support@easeport.com",
-            body: "Hello! I'd be happy to help you with your login issues. Could you please provide more details about what's happening when you try to log in?",
-            localDateTime: "2025-10-29T10:05:00",
-            emailMessageId: "msg_002",
-            inReplyTo: "msg_001"
-        },
-        {
-            ticketMessageId: 3,
-            ticketId: ticketId,
-            sender: "customer@example.com",
-            body: "When I enter my credentials, it just shows a spinning wheel and nothing happens.",
-            localDateTime: "2025-10-29T10:10:00",
-            emailMessageId: "msg_003",
-            inReplyTo: "msg_002"
-        },
-        {
-            ticketMessageId: 4,
-            ticketId: ticketId,
-            sender: "support@easeport.com",
-            body: "Thank you for the details. I'll check this issue right away. Could you please try clearing your browser cache and cookies, then attempt to log in again?",
-            localDateTime: "2025-10-29T10:15:00",
-            emailMessageId: "msg_004",
-            inReplyTo: "msg_003"
+    const handleReply = (message: TicketMessage) => {
+        setReplyTo(message);
+        // allow mount then animate highlight
+        setTimeout(() => setShowReplyHighlight(true), 10);
+        // focus textarea so user can start typing reply
+        setTimeout(() => textareaRef.current?.focus(), 60);
+    };
+
+    const cancelReply = () => {
+        setShowReplyHighlight(false);
+        setTimeout(() => setReplyTo(null), 180);
+    };
+
+    const fetchConversation = async () => {
+        setLoadingConversation(true);
+        try {
+            const res = await fetch(`${apiUrl}/api/ticketMessages/getConversation/${ticketId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error('Failed fetching conversation', data);
+                setTicketConversation([]);
+                return;
+            }
+
+            setTicketConversation(data);
+            console.log('conversation loaded', data);
+        } catch (err) {
+            console.error('Error fetching conversation', err);
+            setTicketConversation([]);
+        } finally {
+            setLoadingConversation(false);
         }
-    ];
+    };
+
+    useEffect(() => {
+        if (ticketId && !Number.isNaN(ticketId)) {
+            fetchConversation();
+        }
+    }, [ticketId]);
+
 
     return (
         <Box style={{ height: '700px', padding: '16px' }}>
@@ -119,8 +141,10 @@ export default function ConversationTable({
                 <Text fw={500} size="lg" mb="md">Conversation History</Text>
                 <ScrollArea h={500} offsetScrollbars>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {messages.map((message) => {
+                        {ticketConversation.map((message: TicketMessage) => {
                             const isCurrentUser = message.sender === currentUser;
+                            // find the message this one replies to (if any)
+                            const repliedTo = ticketConversation.find((m: TicketMessage) => m.emailMessageId === message.inReplyTo);
                             return (
                                 <div
                                     key={message.ticketMessageId}
@@ -130,25 +154,55 @@ export default function ConversationTable({
                                         width: '100%'
                                     }}
                                 >
-                                    <Paper
-                                        shadow="sm"
-                                        p="sm"
-                                        style={{
-                                            maxWidth: '70%',
-                                            backgroundColor: isCurrentUser ? '#E3F2FD' : '#F5F5F5',
-                                            borderRadius: '12px',
-                                            marginLeft: isCurrentUser ? 'auto' : '0',
-                                            marginRight: isCurrentUser ? '0' : 'auto'
-                                        }}
-                                    >
-                                        <Text size="sm" c="dimmed" mb={4}>
-                                            {message.sender}
-                                        </Text>
-                                        <Text>{message.body}</Text>
-                                        <Text size="xs" c="dimmed" mt={4}>
-                                            {new Date(message.localDateTime).toLocaleTimeString()}
-                                        </Text>
-                                    </Paper>
+                                    <div style={{ maxWidth: '70%' }}>
+                                        {repliedTo && (
+                                            <div
+                                                style={{
+                                                    marginBottom: 6,
+                                                    padding: '6px 8px',
+                                                    borderLeft: '3px solid rgba(34,139,230,0.9)',
+                                                    background: '#fbfdff',
+                                                    borderRadius: 8,
+                                                    color: 'rgba(0,0,0,0.75)',
+                                                    fontSize: 13,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                            >
+                                                <Text size="xs" c="dimmed">In reply to {repliedTo.sender}:</Text>
+                                                <Text size="sm" style={{ maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{repliedTo.body}</Text>
+                                            </div>
+                                        )}
+
+                                        <Paper
+                                            shadow="sm"
+                                            p="sm"
+                                            style={{
+                                                backgroundColor: isCurrentUser ? '#E3F2FD' : '#F5F5F5',
+                                                borderRadius: '12px'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Text size="sm" c="dimmed" mb={4}>
+                                                    {message.sender}
+                                                </Text>
+                                                <a
+                                                    href="#"
+                                                    onClick={(e) => { e.preventDefault(); handleReply(message); }}
+                                                    style={{ textDecoration: 'none', cursor: 'pointer' }}
+                                                >
+                                                    <Text size="sm" c="dimmed" mb={4}>
+                                                        reply
+                                                    </Text>
+                                                </a>
+                                            </div>
+                                            <Text>{message.body}</Text>
+                                            <Text size="xs" c="dimmed" mt={4}>
+                                                {new Date(message.localDateTime).toLocaleTimeString()}
+                                            </Text>
+                                        </Paper>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -156,6 +210,31 @@ export default function ConversationTable({
                 </ScrollArea>
 
                 <Paper shadow="xs" p="md" mt="md">
+                    {replyTo && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '8px',
+                                borderLeft: '4px solid #228be6',
+                                marginBottom: '8px',
+                                background: '#f7fbff',
+                                borderRadius: 6,
+                                transition: 'transform 180ms ease, opacity 180ms ease',
+                                transform: showReplyHighlight ? 'translateY(0)' : 'translateY(-6px)',
+                                opacity: showReplyHighlight ? 1 : 0
+                            }}
+                        >
+                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Text size="xs" c="dimmed">Replying to {replyTo.sender}</Text>
+                                <Text size="sm" style={{ maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{replyTo.body}</Text>
+                            </div>
+                            <button type="button" onClick={cancelReply} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} aria-label="Cancel reply">
+                                <IconX size={16} />
+                            </button>
+                        </div>
+                    )}
                     <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Textarea
                             styles={{
@@ -171,6 +250,7 @@ export default function ConversationTable({
                             required
                             placeholder="Type your response..."
                             {...form.getInputProps('message')}
+                            ref={textareaRef}
                             disabled={isClosed}
                         />
                         <Flex justify="flex-end" gap="md" mt="md">

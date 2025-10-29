@@ -13,10 +13,14 @@ import ConversationTable from './ViewConversation';
 export default function ViewTicketPage() {
     const params = useParams();
     const ticketId = Number(params.ticketId);
-    const { loggedInUser } = useAuthContext();
-    const { singleTicket, refetchSingleTicket } = useTickets();
-    const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const { loggedInUser } = useAuthContext();
+
+    const { singleTicket, refetchSingleTicket } = useTickets();
+
+    const [loading, setLoading] = useState(false);
+
     const [responseMessage, setResponseMessage] = useState<Answer | null>(null);
     const [showNotification, setShowNotification] = useState(false);
     const condition = singleTicket?.id !== ticketId;
