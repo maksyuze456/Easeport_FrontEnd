@@ -1,17 +1,13 @@
 'use client';
 import {
   IconDots,
-  IconMessages,
-  IconCheck ,
   IconPencil,
   IconX,
-  IconTrash,
   IconBriefcase2
 } from '@tabler/icons-react';
 import { ActionIcon, Badge, Group, Menu, Table, Text, Notification } from '@mantine/core';
 import { Ticket, TicketStatus, useTickets } from '../../../_context/TicketProvider'
 import { useState, useEffect } from 'react';
-
 type TicketsTableProps = {
   ticketStatus: TicketStatus;
   myTickets?: Ticket[] | null;                 // default empty ticket table if not provided
@@ -41,7 +37,7 @@ export default function TicketsTable({
   myTickets,
   menuActions
 }: TicketsTableProps) {
-    const { tickets, assignTicket } = useTickets();
+    const { tickets, assignTicket, refetch } = useTickets();
     const[ticketsToShow, setTicketsToShow] = useState<Ticket[] | null>([])
     const xIcon = <IconX size={20} />;
     
@@ -52,7 +48,6 @@ export default function TicketsTable({
     setTicketsToShow(tickets);
   }
 }, [tickets, myTickets]);
-      
 
     if (ticketsToShow) {
       const rows = ticketsToShow.map((ticket) => (

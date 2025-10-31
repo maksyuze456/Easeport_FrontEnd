@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 export type Ticket = {
     id: number;

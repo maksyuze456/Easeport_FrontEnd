@@ -5,6 +5,8 @@ import { Group, Center, Button } from "@mantine/core";
 import TicketsTable from "../_TicketsTable/TicketsTable";
 import { TicketStatus, useTickets } from '../../../_context/TicketProvider';
 import { useEffect } from 'react';
+import { useTicketWebSocket } from "@/app/_hooks/useTicketWebSocket";
+import { useAssignTicketWebSocket } from "@/app/_hooks/useAssignTicketWebSocket";
 
 export default function TicketsPage() {
     const router = useRouter();
@@ -22,6 +24,15 @@ export default function TicketsPage() {
     useEffect(() => {
         refetch(status);
     }, [status]);
+
+    const { isConnected: isTicketConnected } = useTicketWebSocket(() => {
+      console.log("New ticket arrived boi.");
+      refetch('Open');
+    })
+    const { isConnected: isAssignConnected } = useAssignTicketWebSocket(() => {
+      console.log("Someone assigned ticket")
+      refetch('Open');
+    });
 
 
     const handleWhenTicketAssigned = async () => {

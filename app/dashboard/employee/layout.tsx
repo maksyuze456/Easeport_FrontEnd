@@ -1,5 +1,6 @@
 'use client';
 
+import { TicketConversationProvider } from '@/app/_context/TicketConversationProvider';
 import { TicketProvider } from '../../_context/TicketProvider';
 
 
@@ -10,7 +11,9 @@ type EmployeeLayoutProps = {
 export default function EmployeeLayout({children}: EmployeeLayoutProps) {
     return (
         <TicketProvider>
+            <TicketConversationProvider>
             {children}
+            </TicketConversationProvider>
         </TicketProvider>
     )
 }
