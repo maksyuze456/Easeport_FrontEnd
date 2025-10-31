@@ -5,16 +5,7 @@ import { Answer, Message, useTickets } from "../../../../_context/TicketProvider
 import { useEffect, useRef, useState } from 'react';
 import { useAuthContext } from '@/app/_context/AuthProvider';
 import { IconX } from '@tabler/icons-react';
-
-interface TicketMessage {
-    ticketMessageId: number;
-    ticketId: number;
-    sender: string;
-    body: string;
-    localDateTime: string;
-    emailMessageId: string;
-    inReplyTo: string | null;
-}
+import { TicketMessage, useTicketConversation } from '@/app/_context/TicketConversationProvider';
 
 export default function ConversationTable({
     onSuccess, onCloseTicket
@@ -26,17 +17,17 @@ export default function ConversationTable({
     const params = useParams();
     const ticketId = Number(params.ticketId);
     const { loggedInUser } = useAuthContext();
-    const { setAnswer, refetchSingleTicket, singleTicket, closeTicket, sendAnswer } = useTickets();
-    const [ticketConversation, setTicketConversation] = useState<TicketMessage[]>([]);
+    const { setAnswer, refetchSingleTicket, singleTicket, closeTicket } = useTickets();
     const [loadingConversation, setLoadingConversation] = useState(false);
     const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);
     const [showReplyHighlight, setShowReplyHighlight] = useState(false);
+    const { ticketConversation, refetchConversation, sendAnswer } = useTicketConversation();
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const prevTicketId = useRef<number | null>(null);
     const isClosed = singleTicket?.status?.toLowerCase() === 'closed';
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-    const currentUser = "maksy123@gmail.com"; // This should come from your auth context loggedInUser?.username;
+    const currentUser = loggedInUser?.username; // This should come from your auth context loggedInUser?.username;
     const form = useForm({
         mode: 'controlled',
         initialValues: {
@@ -69,6 +60,8 @@ export default function ConversationTable({
 
             if(onSuccess) {
                 onSuccess(resSendMessage);
+                form.reset();
+                refetchConversation(ticketId, loadingConversation, setLoadingConversation);
             }
 
         } catch (err) {
@@ -92,9 +85,7 @@ export default function ConversationTable({
 
     const handleReply = (message: TicketMessage) => {
         setReplyTo(message);
-        // allow mount then animate highlight
         setTimeout(() => setShowReplyHighlight(true), 10);
-        // focus textarea so user can start typing reply
         setTimeout(() => textareaRef.current?.focus(), 60);
     };
 
@@ -103,34 +94,9 @@ export default function ConversationTable({
         setTimeout(() => setReplyTo(null), 180);
     };
 
-    const fetchConversation = async () => {
-        setLoadingConversation(true);
-        try {
-            const res = await fetch(`${apiUrl}/api/ticketMessages/getConversation/${ticketId}`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            const data = await res.json();
-
-            if (!res.ok) {
-                console.error('Failed fetching conversation', data);
-                setTicketConversation([]);
-                return;
-            }
-
-            setTicketConversation(data);
-            console.log('conversation loaded', data);
-        } catch (err) {
-            console.error('Error fetching conversation', err);
-            setTicketConversation([]);
-        } finally {
-            setLoadingConversation(false);
-        }
-    };
-
     useEffect(() => {
         if (ticketId && !Number.isNaN(ticketId)) {
-            fetchConversation();
+            refetchConversation(ticketId, loadingConversation, setLoadingConversation);
         }
     }, [ticketId]);
 

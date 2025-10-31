@@ -9,7 +9,7 @@ import { createPortal } from "react-dom";
 import { useParams, useRouter } from "next/navigation";
 import { use, useEffect, useState } from 'react';
 import ConversationTable from './ViewConversation';
-
+import { useTicketConversation } from '@/app/_context/TicketConversationProvider';
 export default function ViewTicketPage() {
     const params = useParams();
     const ticketId = Number(params.ticketId);
@@ -18,7 +18,7 @@ export default function ViewTicketPage() {
     const { loggedInUser } = useAuthContext();
 
     const { singleTicket, refetchSingleTicket } = useTickets();
-
+    const { refetchConversation } = useTicketConversation();
     const [loading, setLoading] = useState(false);
 
     const [responseMessage, setResponseMessage] = useState<Answer | null>(null);
