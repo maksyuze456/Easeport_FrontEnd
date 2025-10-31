@@ -24,7 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Mantine script to avoid color-scheme flash on first load */}
         <ColorSchemeScript />
       </head>
       <body
