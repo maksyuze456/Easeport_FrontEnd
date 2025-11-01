@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 export type Ticket = {
     id: number;
@@ -37,6 +37,7 @@ const TicketContext = createContext<{
     assignTicket: (ticketId: number) => Promise<void>;
     refetchMyTickets: (ticketStatus: TicketStatus) => Promise<void>;
     closeTicket: (ticketId: number) => Promise<Message>;
+    sendAnswer: (ticketId: number, ticketMessageId?: number) => Promise<Message>;
 }>({
     tickets: null,
     myTickets: null,
@@ -50,6 +51,9 @@ const TicketContext = createContext<{
     assignTicket: async () => {},
     closeTicket: async () => {
         return { message: '' }
+    },
+    sendAnswer: async () => {
+        return { message: ''}
     } 
 })
 
@@ -152,9 +156,45 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
             console.log(err);
             throw err;
         }
-
-
     };
+
+    const fetchSendAnswer = async (ticketId: number, ticketMessageId?: number): Promise<Message> => {
+
+        if(ticketMessageId) {
+            try {
+                const res = await fetch(`${apiUrl}/api/tickets/sendAnswer/${ticketId}/reply/${ticketMessageId}`,{
+                    method: 'POST',
+                    credentials: 'include'
+                });
+    
+                const data = await res.json();
+    
+                if(!res.ok) throw new Error(data);
+    
+                return data as Message;
+            } catch(err) {
+                console.log(err);
+                throw err;
+            }
+        } else {
+            try {
+                const res = await fetch(`${apiUrl}/api/tickets/sendAnswer/${ticketId}`,{
+                    method: 'POST',
+                    credentials: 'include'
+                });
+    
+                const data = await res.json();
+    
+                if(!res.ok) throw new Error(data);
+    
+                return data as Message;
+            } catch(err) {
+                console.log(err);
+                throw err;
+            }
+        }
+
+    }
 
     const fetchCloseTicket = async (ticketId: number) => {
 
@@ -190,7 +230,8 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
                 setAnswer: fetchSetAnswer,
                 refetchMyTickets: fetchMyTickets,
                 assignTicket: fetchAssignTicket,
-                closeTicket: fetchCloseTicket
+                closeTicket: fetchCloseTicket,
+                sendAnswer: fetchSendAnswer
             }}
         >
             {children}

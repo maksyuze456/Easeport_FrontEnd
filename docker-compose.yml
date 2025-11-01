@@ -3,7 +3,7 @@
 services:
   next-app: 
     image: maksyuze456/easeport-next:latest
-    container_name: easeport-next-prod
+    container_name: easeport-next-staging
     working_dir: /app
     ports:
       - 3000:3000

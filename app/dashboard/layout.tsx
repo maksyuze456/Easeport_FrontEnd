@@ -1,12 +1,17 @@
 'use client';
 
-import { AppShell, Center, Loader } from '@mantine/core';
+import { AppShell, Center, Loader, Notification } from '@mantine/core';
 import { AuthProvider, useAuthContext } from "../_context/AuthProvider";
-import { NavbarSegmented } from "../_components/NavBarSegmented/NavbarSegmented";
-import { NavbarSimple } from "../_components/NavbarSimple/NavbarSimple";
+
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useState } from 'react';
+import { IconCheck } from '@tabler/icons-react';
+
+import { createPortal } from "react-dom";
+import { Message } from "../_context/TicketProvider"; 
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
+import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
+import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,13 +23,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { loggedInUser, loading } = useAuthContext();
+  const [responseMessage, setResponseMessage] = useState<Message | null>(null);
+  const [showNotification, setShowNotification] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if(!loading && !loggedInUser) {
-      router.push("/login");
-    }
-  }, [loading, loggedInUser, router]);
 
   if (loading) {
     return (
@@ -33,14 +34,13 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       </Center>
     );
   };
-
   if(!loggedInUser) {
     return null;
   }
 
   return (
     <AppShell
-      withBorder={false}
+      withBorder={true}
       padding="md"
       navbar={{
         width: 300, 
@@ -60,6 +60,24 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       </AppShell.Navbar>
       <AppShell.Main>
         {children}
+        {showNotification && createPortal(
+                    <div style={{
+                        position: 'fixed',
+                        bottom: 20,
+                        right: 20,
+                        zIndex: 1000
+                    }}>
+                        <Notification
+                            icon={<IconCheck size={20} />}
+                            color="teal"
+                            title="All good!"
+                            onClose={() => setShowNotification(false)}
+                        >
+                            {responseMessage?.message || "Response saved successfully"}
+                        </Notification>
+                    </div>,
+                    document.body
+                )}
       </AppShell.Main>
     </AppShell>
   );

@@ -8,14 +8,19 @@ import { IconX, IconCheck } from '@tabler/icons-react';
 import { createPortal } from "react-dom";
 import { useParams, useRouter } from "next/navigation";
 import { use, useEffect, useState } from 'react';
-
+import ConversationTable from './ViewConversation';
+import { useTicketConversation } from '../../../../_context/TicketConversationProvider';
 export default function ViewTicketPage() {
     const params = useParams();
     const ticketId = Number(params.ticketId);
-    const { loggedInUser } = useAuthContext();
-    const { singleTicket, refetchSingleTicket } = useTickets();
-    const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const { loggedInUser } = useAuthContext();
+
+    const { singleTicket, refetchSingleTicket } = useTickets();
+    const { refetchConversation } = useTicketConversation();
+    const [loading, setLoading] = useState(false);
+
     const [responseMessage, setResponseMessage] = useState<Answer | null>(null);
     const [showNotification, setShowNotification] = useState(false);
     const condition = singleTicket?.id !== ticketId;
@@ -43,7 +48,7 @@ export default function ViewTicketPage() {
     
     
 
-    return(
+    return (
         <>
         <div style={{ padding: "16px" }}>
             <Button
@@ -52,54 +57,69 @@ export default function ViewTicketPage() {
             >
                 Back
             </Button>
-            <Center>
-            <Box pos="relative" style={{
-                maxWidth: "600px",
-                width: "100%",
-                padding: "10px",
-                border: "2px solid white",
-                borderRadius: "10px",
-                boxShadow: "0px 1px 5px 5px #eef0f3ff"
-                }}>
-                <LoadingOverlay
-                    visible={loading}
-                    zIndex={1000}
-                    overlayProps={{ radius: "sm", blur: 2 }}
-                />
-
-                <Text fw={500} size="lg" ml="xs">
-                    Ticket
-                </Text>
-
-                {singleTicket && (
-                    <ViewTicket
-                    ticket={singleTicket}
-                    userId={loggedInUser?.id}
-                    onSuccess={handleSuccess}
-                    onCloseTicket={handleCloseTicket}
-                    />
-                )}
-            </Box>
-            </Center>
-              {showNotification && createPortal(
-        <div style={{
-          position: 'fixed',
-          bottom: 20,
-          right: 20,
-          zIndex: 1000
-        }}>
-          <Notification
-            icon={<IconCheck size={20} />}
-            color="teal"
-            title="All good!"
-            onClose={() => setShowNotification(false)}
-          >
-            {responseMessage?.message || "Response saved successfully"}
-          </Notification>
-        </div>,
-        document.body
-      )}
         </div>
+            <div style={{
+                marginTop: "10px",
+                padding: "16px",
+                display: "flex",
+                alignItems: "center"
+            }}>
+                <div style={{ flex: "1" }}>
+                    <Center>
+                        <Box pos="relative" style={{
+                            maxWidth: "600px",
+                            width: "100%",
+                            padding: "10px",
+                            border: "2px solid white",
+                            borderRadius: "10px",
+                            boxShadow: "0px 1px 5px 5px #eef0f3ff"
+                        }}>
+                            <LoadingOverlay
+                                visible={loading}
+                                zIndex={1000}
+                                overlayProps={{ radius: "sm", blur: 2 }}
+                            />
+
+                            <Text fw={500} size="lg" ml="xs">
+                                Ticket
+                            </Text>
+
+                            {singleTicket && (
+                                <ViewTicket
+                                    ticket={singleTicket}
+                                    userId={loggedInUser?.id}
+                                    onSuccess={handleSuccess}
+                                    onCloseTicket={handleCloseTicket}
+                                />
+                            )}
+                        </Box>
+                    </Center>
+                </div>
+                <div style={{ flex: "1" }}>
+                    <ConversationTable
+                        onSuccess={handleSuccess}
+                        onCloseTicket={handleCloseTicket}
+                    />
+                </div>
+                {showNotification && createPortal(
+                    <div style={{
+                        position: 'fixed',
+                        bottom: 20,
+                        right: 20,
+                        zIndex: 1000
+                    }}>
+                        <Notification
+                            icon={<IconCheck size={20} />}
+                            color="teal"
+                            title="All good!"
+                            onClose={() => setShowNotification(false)}
+                        >
+                            {responseMessage?.message || "Response saved successfully"}
+                        </Notification>
+                    </div>,
+                    document.body
+                )}
+            </div>
         </>
     );
     
