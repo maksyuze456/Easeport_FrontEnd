@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MantineProvider } from '@mantine/core';
-import { theme } from './theme';
+import { theme } from '../theme';
 import { AuthProvider } from './_context/AuthProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
