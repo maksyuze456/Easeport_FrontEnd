@@ -14,7 +14,7 @@ export default function TicketsPage() {
     const rawStatus = searchParams.get("status");
     const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
     const { refetch } = useTickets();
-
+    
 
     const status: TicketStatus = 
         rawStatus && validStatuses.includes(rawStatus as TicketStatus)

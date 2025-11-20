@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getWebSocketClient } from "../_lib/websocket";
+import { useAuthContext } from "../_context/AuthProvider";
 
 interface Message {
   ticketId: string;
@@ -10,7 +11,7 @@ export function useTicketMessageWebSocket(onAssign: () => void) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const subscriptionRef = useRef<any>(null);
   const onAssignRef = useRef(onAssign);
-
+  const { loggedInUser } = useAuthContext();
   useEffect(() => {
     onAssignRef.current = onAssign;
   }, [onAssign]);
@@ -19,9 +20,8 @@ export function useTicketMessageWebSocket(onAssign: () => void) {
     let isMounted = true;
     getWebSocketClient(apiUrl).then((client) => {
       if (!isMounted) return;
-
       setIsConnected(true);
-      subscriptionRef.current = client.subscribe('/user/queue/ticket-messages', (message) => {
+      subscriptionRef.current = client.subscribe(`/user/${loggedInUser?.username}/ticket-messages`, (message) => {
         const notification: Message = JSON.parse(message.body);
         console.log('Ticket message:', notification);
         onAssignRef.current?.();
@@ -31,7 +31,7 @@ export function useTicketMessageWebSocket(onAssign: () => void) {
     return () => {
       isMounted = false;
       subscriptionRef.current?.unsubscribe();
-      console.log('Unsubscribed from /user/queue/ticket-messages');
+      console.log('Unsubscribed from /ticket-messages');
     };
   }, [apiUrl]);
 
