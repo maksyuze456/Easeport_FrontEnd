@@ -21,7 +21,7 @@ export function useTicketMessageWebSocket(onAssign: () => void) {
       if (!isMounted) return;
 
       setIsConnected(true);
-      subscriptionRef.current = client.subscribe('/queue/ticket-messages', (message) => {
+      subscriptionRef.current = client.subscribe('/user/queue/ticket-messages', (message) => {
         const notification: Message = JSON.parse(message.body);
         console.log('Ticket message:', notification);
         onAssignRef.current?.();
@@ -31,7 +31,7 @@ export function useTicketMessageWebSocket(onAssign: () => void) {
     return () => {
       isMounted = false;
       subscriptionRef.current?.unsubscribe();
-      console.log('Unsubscribed from /queue/ticket-messages');
+      console.log('Unsubscribed from /user/queue/ticket-messages');
     };
   }, [apiUrl]);
 
