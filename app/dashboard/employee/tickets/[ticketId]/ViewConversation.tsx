@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuthContext } from '../../../../_context/AuthProvider';
 import { IconX } from '@tabler/icons-react';
 import { TicketMessage, useTicketConversation } from '../../../../_context/TicketConversationProvider';
+import { useTicketMessageWebSocket } from '../../../../_hooks/useTicketMessageWebSocket';
 
 export default function ConversationTable({
     onSuccess, onCloseTicket
@@ -34,6 +35,11 @@ export default function ConversationTable({
             message: singleTicket?.answer || ""
         }
     });
+
+    const { isConnected } = useTicketMessageWebSocket(() => {
+        console.log("New ticket message.");
+        refetchConversation(ticketId);
+    })
 
     useEffect(() => {
         if (prevTicketId.current !== singleTicket?.id && singleTicket?.id !== undefined) {
