@@ -10,6 +10,7 @@ import {
 import { Code, Flex, Group } from '@mantine/core';
 import classes from './NavbarSimple.module.css';
 import { useRouter, usePathname } from 'next/navigation';
+import { useWebSocket } from '../../_context/WebSocketContextProvider';
 
 const data = [
   { link: '/dashboard/employee/tickets', label: 'Tickets', icon: IconTicket },
@@ -21,6 +22,8 @@ export function NavbarSimple() {
   const router = useRouter();
   const pathname = usePathname();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  const { disconnect } = useWebSocket();
+
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
@@ -29,6 +32,7 @@ export function NavbarSimple() {
         credentials: 'include'
       });
       if (!res.ok) throw new Error("Error on logout");
+      await disconnect();
       router.push("/login");
     } catch(err) {
       console.log(err);

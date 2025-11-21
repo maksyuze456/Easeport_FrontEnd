@@ -16,6 +16,7 @@ type WsContextType = {
   client: Client | null;
   connected: boolean;
   subscribe: (topic: string, callback: (msg: string) => void) => () => void;
+  disconnect: () => Promise<void>;
 };
 type Message = {
   message: string;
@@ -26,6 +27,7 @@ const WsContext = createContext<WsContextType>({
   client: null,
   connected: false,
   subscribe: () => () => {},
+  disconnect: async () => {},
 });
 
 export const useWebSocket = () => useContext(WsContext);
@@ -122,9 +124,25 @@ export const WebSocketContextProvider = ({
 
     stompClient.activate();
   }
+
+  const disconnect = async () => {
+    if (stompClient) {
+      console.log("[WS] Disconnecting WebSocket...");
+      try {
+        await stompClient.deactivate();
+        console.log("[WS] WebSocket deactivated");
+      } catch (err) {
+        console.error("[WS] Error deactivating:", err);
+      }
+      subscriptions.current.clear();
+      subscribedTopics.current.clear();
+      stompClient = null;
+      setConnected(false);
+    }
+  };
   /*
-  
- 
+
+
   useEffect(() => {
     fetchWs();
     console.log("yessir");
@@ -137,7 +155,8 @@ export const WebSocketContextProvider = ({
         subscribe: subscribe,
         fetchWs: fetchWs,
         client: stompClient,
-        connected: stompClient.connected,
+        connected: connected,
+        disconnect: disconnect,
       }}
     >
       {children}
