@@ -30,7 +30,7 @@ export function NavbarSegmented() {
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
-    try{
+    try {
       const res = await fetch(`${apiUrl}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include'
@@ -38,7 +38,7 @@ export function NavbarSegmented() {
       if (!res.ok) throw new Error("Error on logout");
       await disconnect();
       router.push("/login");
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -46,39 +46,40 @@ export function NavbarSegmented() {
     const isAstive = pathname === item.link;
 
     return (
-    <a
-      className={classes.link}
-      data-active={isAstive || undefined}
-      href={item.link}
-      key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        if (item.link) router.push(item.link);
-        setActive(item.label);
-      }}
-    >
-      <item.icon className={classes.linkIcon} stroke={1.5} />
-      <span>{item.label}</span>
-    </a>
-  )});
-  
+      <a
+        className={classes.link}
+        data-active={isAstive || undefined}
+        href={item.link}
+        key={item.label}
+        onClick={(event) => {
+          event.preventDefault();
+          if (item.link) router.push(item.link);
+          setActive(item.label);
+        }}
+      >
+        <item.icon className={classes.linkIcon} stroke={1.5} />
+        <span>{item.label}</span>
+      </a>
+    )
+  });
+
 
   return (
     <nav className={classes.navbar}>
       <div>
-          <Flex
+        <Flex
           direction={'row'}
           justify={'space-between'}
           className={classes.logo}
-          >
-            <div>  
+        >
+          <div>
             <span>Ease</span>
             <span style={{
               color: '#228BE6'
             }}>Port</span>
-            </div>            
+          </div>
           <Code fw={700}>v0.1.0</Code>
-          </Flex>
+        </Flex>
         <SegmentedControl
           value={section}
           onChange={(value: any) => setSection(value)}

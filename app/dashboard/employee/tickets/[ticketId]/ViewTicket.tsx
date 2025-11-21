@@ -2,7 +2,7 @@
 
 import { useForm } from "@mantine/form";
 import { Answer, Message, Ticket, useTickets, } from "../../../../_context/TicketProvider";
-import { Badge, Table, Text, Textarea , Flex, Button } from '@mantine/core';
+import { Badge, Table, Text, Textarea, Flex, Button } from '@mantine/core';
 import { priorityColors, ticketStatusColors } from "../../_TicketsTable/TicketsTable";
 import { IconX, IconCheck } from '@tabler/icons-react';
 import { useRouter } from "next/navigation";
@@ -10,12 +10,12 @@ import { useEffect, useRef, useState } from 'react';
 
 
 export default function ViewTicket({
-    ticket, userId, onSuccess, onCloseTicket
+  ticket, userId, onSuccess, onCloseTicket
 }: {
-    ticket: Ticket, 
-    userId?: number,
-    onSuccess?: (res: Answer) => void;
-    onCloseTicket?: (res: Message) => void;  
+  ticket: Ticket,
+  userId?: number,
+  onSuccess?: (res: Answer) => void;
+  onCloseTicket?: (res: Message) => void;
 }) {
   const router = useRouter();
   const { setAnswer, refetchSingleTicket, closeTicket } = useTickets();
@@ -32,7 +32,7 @@ export default function ViewTicket({
   });
 
   useEffect(() => {
-    if(prevTicketId.current !== ticket.id) {
+    if (prevTicketId.current !== ticket.id) {
       form.setValues({ message: ticket.answer || "" });
       prevTicketId.current = ticket.id;
     }
@@ -46,7 +46,7 @@ export default function ViewTicket({
       const resMessage = await setAnswer(answer, ticket.id);
       refetchSingleTicket(ticket.id);
 
-      if(onSuccess) {
+      if (onSuccess) {
         onSuccess(resMessage);
       }
 
@@ -55,104 +55,105 @@ export default function ViewTicket({
     }
   };
 
-  const handleCloseTicket = async(ticketId: number) => {
+  const handleCloseTicket = async (ticketId: number) => {
 
     try {
-        const res = await closeTicket(ticketId);
+      const res = await closeTicket(ticketId);
 
-        refetchSingleTicket(ticketId);
+      refetchSingleTicket(ticketId);
 
-        if(onCloseTicket) {
-            onCloseTicket(res);
-        }
+      if (onCloseTicket) {
+        onCloseTicket(res);
+      }
 
 
-    } catch(err) {
-        console.log(err as Message);
+    } catch (err) {
+      console.log(err as Message);
     }
-    
+
   };
 
   let row;
 
   if (ticket) {
     row = () => (
-    <>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Subject</Text>
-        </Table.Td>
-        <Table.Td>
-            <Text fz="sm">{ticket.subject}</Text>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Sender</Text>
-        </Table.Td>
-        <Table.Td>
-          <Text fz="sm">{ticket.from}</Text>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Name</Text>
-        </Table.Td>
-        <Table.Td>
-          <Text fz="sm">{ticket.name}</Text>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Type</Text>
-        </Table.Td>
-        <Table.Td>
-          <Text fz="sm">{ticket.type}</Text>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Queue</Text>
-        </Table.Td>
-        <Table.Td>
-          <Text fz="sm">{ticket.queueType}</Text>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Priority</Text>
-        </Table.Td>
-        <Table.Td>
-          <Badge color={priorityColors[ticket.priority.toLowerCase()]} variant="light">
-            {ticket.priority}
-          </Badge>
-        </Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Status</Text>
-        </Table.Td>
-        <Table.Td>
-          <Badge color={ticketStatusColors[ticket.status.toLowerCase()]} variant="light">
-            {ticket.status}
-          </Badge>
-        </Table.Td>
-      </Table.Tr>
-      <Text fz="sm" ml={"xs"} mt={"xs"} fw={500}>Body</Text>
-      <Table.Tr>
-        <Table.Td >
-          <Text fz="sm">{ticket.body}</Text>
-        </Table.Td>
-      </Table.Tr>
-      
-    </>
-  );} else {
-    row = () => (
+      <>
         <Table.Tr>
-            <Table.Td>
-                <Text fz="sm" fw={500}>Nothing to view</Text>
-            </Table.Td>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Subject</Text>
+          </Table.Td>
+          <Table.Td>
+            <Text fz="sm">{ticket.subject}</Text>
+          </Table.Td>
         </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Sender</Text>
+          </Table.Td>
+          <Table.Td>
+            <Text fz="sm">{ticket.from}</Text>
+          </Table.Td>
+        </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Name</Text>
+          </Table.Td>
+          <Table.Td>
+            <Text fz="sm">{ticket.name}</Text>
+          </Table.Td>
+        </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Type</Text>
+          </Table.Td>
+          <Table.Td>
+            <Text fz="sm">{ticket.type}</Text>
+          </Table.Td>
+        </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Queue</Text>
+          </Table.Td>
+          <Table.Td>
+            <Text fz="sm">{ticket.queueType}</Text>
+          </Table.Td>
+        </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Priority</Text>
+          </Table.Td>
+          <Table.Td>
+            <Badge color={priorityColors[ticket.priority.toLowerCase()]} variant="light">
+              {ticket.priority}
+            </Badge>
+          </Table.Td>
+        </Table.Tr>
+        <Table.Tr>
+          <Table.Td>
+            <Text fz="sm" fw={500}>Status</Text>
+          </Table.Td>
+          <Table.Td>
+            <Badge color={ticketStatusColors[ticket.status.toLowerCase()]} variant="light">
+              {ticket.status}
+            </Badge>
+          </Table.Td>
+        </Table.Tr>
+        <Text fz="sm" ml={"xs"} mt={"xs"} fw={500}>Body</Text>
+        <Table.Tr>
+          <Table.Td >
+            <Text fz="sm">{ticket.body}</Text>
+          </Table.Td>
+        </Table.Tr>
+
+      </>
+    );
+  } else {
+    row = () => (
+      <Table.Tr>
+        <Table.Td>
+          <Text fz="sm" fw={500}>Nothing to view</Text>
+        </Table.Td>
+      </Table.Tr>
     );
   }
 
@@ -160,10 +161,10 @@ export default function ViewTicket({
     <>
       <Table.ScrollContainer minWidth={400}>
         <Table horizontalSpacing="xs" verticalSpacing="xs" style={{ tableLayout: 'fixed' }}>
-            <colgroup>
-                <col style={{ width: '400px' }} />
-                <col />
-            </colgroup>
+          <colgroup>
+            <col style={{ width: '400px' }} />
+            <col />
+          </colgroup>
           <Table.Tbody>
             {row()}
           </Table.Tbody>

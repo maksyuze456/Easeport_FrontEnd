@@ -7,7 +7,7 @@ import { IconEyeCheck, IconEyeOff } from '@tabler/icons-react';
 
 
 
-export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } ) {
+export default function AddForm({ onUserAdded }: { onUserAdded?: () => void }) {
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
@@ -29,8 +29,8 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
             <IconEyeOff style={{ width: 'var(--psi-icon-size)', height: 'var(--psi-icon-size)' }} />
         ) : (
             <IconEyeCheck style={{ width: 'var(--psi-icon-size)', height: 'var(--psi-icon-size)' }} />
-    );
-    const handleSubmit = async (e : React.FormEvent) => {
+        );
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const values = form.getValues();
@@ -49,10 +49,10 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
                 const data = await res.json();
                 console.log("Created user: " + data);
                 form.reset();
-                if(onUserAdded) onUserAdded();
+                if (onUserAdded) onUserAdded();
             }
 
-        } catch(err) {
+        } catch (err) {
 
         }
     };
@@ -60,14 +60,14 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
     return (
         <form onSubmit={handleSubmit}>
             <TextInput
-                label = "Username"
+                label="Username"
                 required
                 placeholder='Employee username'
                 key={form.key('username')}
                 {...form.getInputProps('username')}
             />
             <PasswordInput
-                label = "Password"
+                label="Password"
                 placeholder='******'
                 required
                 visible={visible}
@@ -77,7 +77,7 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
                 {...form.getInputProps('password')}
             />
             <TextInput
-                label = "Email"
+                label="Email"
                 required
                 placeholder='employee@email.com'
                 key={form.key('email')}
@@ -85,13 +85,13 @@ export default function AddForm( {onUserAdded} :  { onUserAdded?: () => void } )
             />
             <NativeSelect
                 required
-                label = "Role"
+                label="Role"
                 data={['USER', 'ADMIN']}
                 key={form.key('role')}
                 {...form.getInputProps('role')}
             />
             <Button type="submit" fullWidth mt="xl" size="md" radius="md">
-            Create
+                Create
             </Button>
 
         </form>

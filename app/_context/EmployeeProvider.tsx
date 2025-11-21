@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 
- export type User = {
+export type User = {
     id: number,
     username: string;
     email: string;
@@ -13,7 +13,7 @@ const EmployeeContext = createContext<{
     refetch: () => Promise<void>;
 }>({
     employees: null,
-    refetch: async () => {}
+    refetch: async () => { }
 })
 
 export function EmployeeProvider({ children }: { children: React.ReactNode }) {
@@ -26,14 +26,14 @@ export function EmployeeProvider({ children }: { children: React.ReactNode }) {
                 method: 'GET',
                 credentials: 'include'
             });
-            if(!res.ok) throw new Error("Error while fetching employees. Status: " + res.status);
+            if (!res.ok) throw new Error("Error while fetching employees. Status: " + res.status);
 
             const data = await res.json();
 
             setEmployees(data);
 
 
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         }
     }

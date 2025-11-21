@@ -1,5 +1,5 @@
 export default function EmployeePage() {
-    return(
+    return (
         <div>Employee page</div>
     )
 }

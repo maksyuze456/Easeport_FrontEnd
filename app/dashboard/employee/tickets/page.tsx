@@ -8,33 +8,33 @@ import { useEffect } from 'react';
 
 
 export default function TicketsPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const rawStatus = searchParams.get("status");
-    const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
-    const { refetch } = useTickets();
-    
-
-    const status: TicketStatus = 
-        rawStatus && validStatuses.includes(rawStatus as TicketStatus)
-    ? (rawStatus as TicketStatus)
-    : 'Open';
-
-    useEffect(() => {
-        refetch(status);
-    }, [status]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawStatus = searchParams.get("status");
+  const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
+  const { refetch } = useTickets();
 
 
-    const handleWhenTicketAssigned = async () => {
-        await refetch(status);
-        router.push("/dashboard/employee/tickets");
-    };
+  const status: TicketStatus =
+    rawStatus && validStatuses.includes(rawStatus as TicketStatus)
+      ? (rawStatus as TicketStatus)
+      : 'Open';
+
+  useEffect(() => {
+    refetch(status);
+  }, [status]);
 
 
-    return(
-        <div style={{ padding: "16px" }}>
+  const handleWhenTicketAssigned = async () => {
+    await refetch(status);
+    router.push("/dashboard/employee/tickets");
+  };
+
+
+  return (
+    <div style={{ padding: "16px" }}>
       <Group mb="md">
-        
+
         <Button
           variant="default"
           onClick={() => router.push("/dashboard/employee/tickets?status=Open")}
@@ -51,12 +51,12 @@ export default function TicketsPage() {
 
       <Center>
         {status === 'Open' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned}/>
+          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned} />
         )}
         {status === 'Closed' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned}/>
+          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned} />
         )}
       </Center>
     </div>
-    );
+  );
 }

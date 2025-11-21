@@ -45,19 +45,19 @@ export default function ViewTicketPage() {
         }
     }, [ticketId]);
 
-    
-    
+
+
 
     return (
         <>
-        <div style={{ padding: "16px" }}>
-            <Button
-                variant="default"
-                onClick={() => router.push(`/dashboard/employee/my_tickets?status=${singleTicket?.status}`)}
-            >
-                Back
-            </Button>
-        </div>
+            <div style={{ padding: "16px" }}>
+                <Button
+                    variant="default"
+                    onClick={() => router.push(`/dashboard/employee/my_tickets?status=${singleTicket?.status}`)}
+                >
+                    Back
+                </Button>
+            </div>
             <div style={{
                 marginTop: "10px",
                 padding: "16px",
@@ -122,7 +122,7 @@ export default function ViewTicketPage() {
             </div>
         </>
     );
-    
+
 
 
 }

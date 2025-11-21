@@ -17,7 +17,7 @@ export function getWebSocketClient(apiUrl: string): Promise<Client> {
         const client = new Client({
             webSocketFactory: () => new SockJS(`${apiUrl}/ws`),
             reconnectDelay: 10000,
-            debug: (msg) => console.log('[STOMP]', msg),
+            debug: (msg) => console.log("[STOMP]", msg),
 
             onConnect: () => {
                 console.log("Websocket connected");
@@ -30,7 +30,7 @@ export function getWebSocketClient(apiUrl: string): Promise<Client> {
                 console.error("WebSocket error:", frame);
                 connectionPromise = null;
                 reject(frame);
-            }
+            },
         });
 
         client.activate();

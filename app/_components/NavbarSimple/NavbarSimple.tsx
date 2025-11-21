@@ -26,7 +26,7 @@ export function NavbarSimple() {
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
-    try{
+    try {
       const res = await fetch(`${apiUrl}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include'
@@ -34,27 +34,27 @@ export function NavbarSimple() {
       if (!res.ok) throw new Error("Error on logout");
       await disconnect();
       router.push("/login");
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
   const links = data.map((item) => {
     const isAstive = pathname === item.link;
-    return(
+    return (
       <a
-      className={classes.link}
-      data-active={isAstive || undefined}
-      href={item.link}
-      key={item.label}
-      onClick={(event) => {
-        event.preventDefault();
-        if(item.link) router.push(item.link);
-        setActive(item.label);
-      }}
-    >
-      <item.icon className={classes.linkIcon} stroke={1.5} />
-      <span>{item.label}</span>
-    </a>
+        className={classes.link}
+        data-active={isAstive || undefined}
+        href={item.link}
+        key={item.label}
+        onClick={(event) => {
+          event.preventDefault();
+          if (item.link) router.push(item.link);
+          setActive(item.label);
+        }}
+      >
+        <item.icon className={classes.linkIcon} stroke={1.5} />
+        <span>{item.label}</span>
+      </a>
     )
   });
 
@@ -63,12 +63,12 @@ export function NavbarSimple() {
       <div className={classes.navbarMain}>
         <Group className={classes.header} justify="space-between">
           <Flex
-          className={classes.logo}
-          >            
-          <span>Ease</span>
-          <span style={{
-            color: '#228BE6'
-          }}>Port</span>
+            className={classes.logo}
+          >
+            <span>Ease</span>
+            <span style={{
+              color: '#228BE6'
+            }}>Port</span>
           </Flex>
           <Code fw={700}>v0.1.0</Code>
         </Group>

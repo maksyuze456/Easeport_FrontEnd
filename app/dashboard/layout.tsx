@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { IconCheck } from '@tabler/icons-react';
 
 import { createPortal } from "react-dom";
-import { Message } from "../_context/TicketProvider"; 
+import { Message } from "../_context/TicketProvider";
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
 import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
 import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
@@ -30,11 +30,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <Center h="100vh">
-        <Loader/>
+        <Loader />
       </Center>
     );
   };
-  if(!loggedInUser) {
+  if (!loggedInUser) {
     return null;
   }
 
@@ -43,16 +43,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       withBorder={true}
       padding="md"
       navbar={{
-        width: 300, 
+        width: 300,
         breakpoint: 'sm',
-        collapsed: { mobile: true }, 
+        collapsed: { mobile: true },
       }}
       header={{
         height: 60
-      }}      
+      }}
     >
       <AppShell.Header>
-        <HeaderSimple/>
+        <HeaderSimple />
       </AppShell.Header>
       <AppShell.Navbar>
         {loggedInUser.role === 'ROLE_ADMIN' && <NavbarSegmented />}
@@ -61,23 +61,23 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <AppShell.Main>
         {children}
         {showNotification && createPortal(
-                    <div style={{
-                        position: 'fixed',
-                        bottom: 20,
-                        right: 20,
-                        zIndex: 1000
-                    }}>
-                        <Notification
-                            icon={<IconCheck size={20} />}
-                            color="teal"
-                            title="All good!"
-                            onClose={() => setShowNotification(false)}
-                        >
-                            {responseMessage?.message || "Response saved successfully"}
-                        </Notification>
-                    </div>,
-                    document.body
-                )}
+          <div style={{
+            position: 'fixed',
+            bottom: 20,
+            right: 20,
+            zIndex: 1000
+          }}>
+            <Notification
+              icon={<IconCheck size={20} />}
+              color="teal"
+              title="All good!"
+              onClose={() => setShowNotification(false)}
+            >
+              {responseMessage?.message || "Response saved successfully"}
+            </Notification>
+          </div>,
+          document.body
+        )}
       </AppShell.Main>
     </AppShell>
   );

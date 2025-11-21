@@ -9,9 +9,9 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if(!loading && !loggedInUser) {
+    if (!loading && !loggedInUser) {
       router.push("/login");
-    } else if(!loading && loggedInUser) {
+    } else if (!loading && loggedInUser) {
       router.push("/dashboard");
     }
   }, [loading, loggedInUser, router]);
@@ -19,7 +19,7 @@ export default function HomePage() {
   if (loading) {
     return (
       <Center h="100vh">
-        <Loader/>
+        <Loader />
       </Center>
     );
   };

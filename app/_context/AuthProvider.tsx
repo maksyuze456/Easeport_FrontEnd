@@ -14,7 +14,7 @@ const AuthContext = createContext<{
     loading: boolean;
 }>({
     loggedInUser: null,
-    refetch: async () => {},
+    refetch: async () => { },
     loading: true
 })
 
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 method: 'GET',
                 credentials: 'include'
             });
-            if(!response.ok){
+            if (!response.ok) {
                 setLoggedInUser(null);
                 setLoadingAuth(false);
                 throw new Error("Error while fetching logged in user: " + response.status);
@@ -45,13 +45,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const data = await response.json();
             setLoggedInUser(data);
-            if(data?.role) {
+            if (data?.role) {
                 document.cookie = `role=${data.role}; path=/; samesite=lax`;
                 console.log(document.cookie);
             };
             setLoadingAuth(false);
 
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         } finally {
             isFetching.current = false;
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [fetchUser]);
 
     return (
-        <AuthContext.Provider value={{loggedInUser, refetch: fetchUser, loading: loadingAuth}}>
+        <AuthContext.Provider value={{ loggedInUser, refetch: fetchUser, loading: loadingAuth }}>
             {children}
         </AuthContext.Provider>
     )

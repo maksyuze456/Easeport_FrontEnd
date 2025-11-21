@@ -31,7 +31,7 @@ const TicketConversationContext = createContext<{
   sendAnswer: (ticketId: number, ticketMessageId?: number) => Promise<Message>;
 }>({
   ticketConversation: [],
-  refetchConversation: async () => {},
+  refetchConversation: async () => { },
   sendAnswer: async () => {
     return { message: "" };
   },

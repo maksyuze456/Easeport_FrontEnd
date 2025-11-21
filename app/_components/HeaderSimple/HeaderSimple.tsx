@@ -36,12 +36,12 @@ export function HeaderSimple() {
       <Container size="md" className={classes.inner}>
         <Flex
           className={classes.logo}
-          >            
+        >
           <span>Ease</span>
           <span style={{
             color: '#228BE6'
           }}>Port</span>
-          </Flex>
+        </Flex>
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>
