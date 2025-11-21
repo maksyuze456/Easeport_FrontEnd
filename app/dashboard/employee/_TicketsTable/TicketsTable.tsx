@@ -1,18 +1,32 @@
-'use client';
+"use client";
 import {
   IconDots,
   IconPencil,
   IconX,
-  IconBriefcase2
-} from '@tabler/icons-react';
-import { ActionIcon, Badge, Group, Menu, Table, Text, Notification } from '@mantine/core';
-import { Ticket, TicketStatus, useTickets } from '../../../_context/TicketProvider'
-import { useState, useEffect } from 'react';
+  IconBriefcase2,
+} from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Badge,
+  Group,
+  Menu,
+  Table,
+  Text,
+  Notification,
+} from "@mantine/core";
+import {
+  Ticket,
+  TicketStatus,
+  useTickets,
+} from "../../../_context/TicketProvider";
+import { useState, useEffect } from "react";
+import { useWebSocket } from "../../../_context/WebSocketContextProvider";
 type TicketsTableProps = {
   ticketStatus: TicketStatus;
-  myTickets?: Ticket[] | null;                 // default empty ticket table if not provided
-  onUpdate: () => void;                        // callback
-  menuActions?: {                              // optional custom menu actions
+  myTickets?: Ticket[] | null; // default empty ticket table if not provided
+  onUpdate: () => void; // callback
+  menuActions?: {
+    // optional custom menu actions
     label: string;
     icon: React.ReactNode;
     onClick: (ticket: Ticket) => void;
@@ -20,37 +34,48 @@ type TicketsTableProps = {
 };
 
 export const priorityColors: Record<string, string> = {
-        high: 'red',
-        medium: 'orange',
-        low: 'yellow'
+  high: "red",
+  medium: "orange",
+  low: "yellow",
 };
 
 export const ticketStatusColors: Record<string, string> = {
-      open: 'green',
-      closed: 'grey',
-      reviewing: 'yellow'
+  open: "green",
+  closed: "grey",
+  reviewing: "yellow",
 };
 
 export default function TicketsTable({
   ticketStatus,
   onUpdate,
   myTickets,
-  menuActions
+  menuActions,
 }: TicketsTableProps) {
-    const { tickets, assignTicket, refetch } = useTickets();
-    const[ticketsToShow, setTicketsToShow] = useState<Ticket[] | null>([])
-    const xIcon = <IconX size={20} />;
-    
-    useEffect(() => {
-  if (myTickets) {
-    setTicketsToShow(myTickets);
-  } else {
-    setTicketsToShow(tickets);
-  }
-}, [tickets, myTickets]);
+  const { tickets, assignTicket, refetch } = useTickets();
+  const [ticketsToShow, setTicketsToShow] = useState<Ticket[] | null>([]);
+  const { subscribe } = useWebSocket();
+  const xIcon = <IconX size={20} />;
 
-    if (ticketsToShow) {
-      const rows = ticketsToShow.map((ticket) => (
+  useEffect(() => {
+    if (myTickets) {
+      setTicketsToShow(myTickets);
+    } else {
+      setTicketsToShow(tickets);
+    }
+  }, [tickets, myTickets]);
+
+  useEffect(() => {
+    subscribe("/topic/new-ticket", () => {
+      refetch("Open");
+    });
+    subscribe("/topic/assign", () => {
+      refetch("Open");
+    });
+  }, []);
+
+
+  if (ticketsToShow) {
+    const rows = ticketsToShow.map((ticket) => (
       <Table.Tr key={ticket.id}>
         <Table.Td>
           <Group gap="sm">
@@ -83,17 +108,23 @@ export default function TicketsTable({
           </Text>
         </Table.Td>
         <Table.Td>
-          <Badge color={priorityColors[ticket.priority.toLowerCase()]} variant="light">
-          {ticket.priority}
-        </Badge>
+          <Badge
+            color={priorityColors[ticket.priority.toLowerCase()]}
+            variant="light"
+          >
+            {ticket.priority}
+          </Badge>
           <Text fz="xs" c="dimmed">
             priority
           </Text>
         </Table.Td>
         <Table.Td>
-          <Badge color={ticketStatusColors[ticket.status.toLowerCase()]} variant="light">
-          {ticket.status}
-        </Badge>
+          <Badge
+            color={ticketStatusColors[ticket.status.toLowerCase()]}
+            variant="light"
+          >
+            {ticket.status}
+          </Badge>
           <Text fz="xs" c="dimmed">
             status
           </Text>
@@ -104,7 +135,7 @@ export default function TicketsTable({
               <IconPencil size={16} stroke={1.5} />
             </ActionIcon>
             <Menu
-              transitionProps={{ transition: 'pop' }}
+              transitionProps={{ transition: "pop" }}
               withArrow
               position="bottom-end"
               withinPortal
@@ -115,16 +146,18 @@ export default function TicketsTable({
                 </ActionIcon>
               </Menu.Target>
               <Menu.Dropdown>
-                {(menuActions ?? [
-                  {
-                    label: 'Accept ticket',
-                    icon: <IconBriefcase2 size={16} />,
-                    onClick: () => {
-                      assignTicket?.(ticket.id);
-                      onUpdate?.();
-                    }
-                  },
-                ]).map(action => (
+                {(
+                  menuActions ?? [
+                    {
+                      label: "Accept ticket",
+                      icon: <IconBriefcase2 size={16} />,
+                      onClick: () => {
+                        assignTicket?.(ticket.id);
+                        onUpdate?.();
+                      },
+                    },
+                  ]
+                ).map((action) => (
                   <Menu.Item
                     key={action.label}
                     leftSection={action.icon}
@@ -139,11 +172,12 @@ export default function TicketsTable({
         </Table.Td>
       </Table.Tr>
     ));
-    return(
+    return (
       <Table.ScrollContainer minWidth={800}>
-      <Table verticalSpacing="md">
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-    </Table.ScrollContainer>
-    );}
-} 
+        <Table verticalSpacing="md">
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
+    );
+  }
+}

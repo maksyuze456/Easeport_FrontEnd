@@ -48,7 +48,7 @@ export function TicketConversationProvider({ children }: { children: React.React
                 credentials: 'include'
             });
             const data = await res.json();
-
+            console.log("conversation loaded: " + data);
             if (!res.ok) {
                 console.error('Failed fetching conversation', data);
                 setTicketConversation([]);
@@ -56,7 +56,6 @@ export function TicketConversationProvider({ children }: { children: React.React
             }
 
             setTicketConversation(data);
-            console.log('conversation loaded', data);
         } catch (err) {
             console.error('Error fetching conversation', err);
             setTicketConversation([]);
