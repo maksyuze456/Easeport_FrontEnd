@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { IconCheck } from '@tabler/icons-react';
 
 import { createPortal } from "react-dom";
-import { Message } from "../_context/TicketProvider";
+import { Message } from '../_types/message';
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
 import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
 import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';

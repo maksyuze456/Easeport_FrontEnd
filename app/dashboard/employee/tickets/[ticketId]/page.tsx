@@ -2,7 +2,8 @@
 import React from 'react';
 import { Center, Notification, Text, Button, Box, LoadingOverlay } from "@mantine/core";
 import { useAuthContext } from "../../../../_context/AuthProvider";
-import { Answer, Message, useTickets } from "../../../../_context/TicketProvider";
+import { useTickets } from "../../../../_context/TicketProvider";
+import { Answer, Message } from '../../../../_types/message';
 import ViewTicket from "./ViewTicket";
 import { IconX, IconCheck } from '@tabler/icons-react';
 import { createPortal } from "react-dom";

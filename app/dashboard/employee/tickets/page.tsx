@@ -3,7 +3,8 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
 import TicketsTable from "../_TicketsTable/TicketsTable";
-import { TicketStatus, useTickets } from '../../../_context/TicketProvider';
+import { useTickets } from '../../../_context/TicketProvider';
+import { TicketStatus } from "../../../_types/tickets";
 import { useEffect } from 'react';
 
 

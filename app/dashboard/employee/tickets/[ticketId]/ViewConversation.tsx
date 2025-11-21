@@ -10,10 +10,9 @@ import {
 import { useParams } from "next/navigation";
 import { useForm } from "@mantine/form";
 import {
-  Answer,
-  Message,
   useTickets,
 } from "../../../../_context/TicketProvider";
+import { Answer, Message } from "../../../../_types/message";
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../../../_context/AuthProvider";
 import { IconX } from "@tabler/icons-react";

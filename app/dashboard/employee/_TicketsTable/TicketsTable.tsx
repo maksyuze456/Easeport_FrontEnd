@@ -14,11 +14,8 @@ import {
   Text,
   Notification,
 } from "@mantine/core";
-import {
-  Ticket,
-  TicketStatus,
-  useTickets,
-} from "../../../_context/TicketProvider";
+import { useTickets } from "../../../_context/TicketProvider";
+import { Ticket, TicketStatus } from "../../../_types/tickets";
 import { useState, useEffect } from "react";
 import { useWebSocket } from "../../../_context/WebSocketContextProvider";
 type TicketsTableProps = {

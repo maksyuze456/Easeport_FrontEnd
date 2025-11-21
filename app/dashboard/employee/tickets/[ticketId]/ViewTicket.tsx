@@ -1,7 +1,9 @@
 'use client';
 
 import { useForm } from "@mantine/form";
-import { Answer, Message, Ticket, useTickets, } from "../../../../_context/TicketProvider";
+import { useTickets, } from "../../../../_context/TicketProvider";
+import { Answer, Message } from "../../../../_types/message";
+import { Ticket } from "../../../../_types/tickets";
 import { Badge, Table, Text, Textarea, Flex, Button } from '@mantine/core';
 import { priorityColors, ticketStatusColors } from "../../_TicketsTable/TicketsTable";
 import { IconX, IconCheck } from '@tabler/icons-react';

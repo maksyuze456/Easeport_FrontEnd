@@ -1,37 +1,14 @@
 "use client";
+
 import {
     createContext,
-    Dispatch,
-    SetStateAction,
     useContext,
     useEffect,
     useState,
 } from "react";
 
-export type Ticket = {
-    id: number;
-    subject: string;
-    name: string;
-    from: string;
-    body: string;
-    type: string;
-    queueType: string;
-    language: string;
-    priority: string;
-    status: string;
-    answer: string;
-    employeeId: string;
-};
-
-export type Answer = {
-    message: string;
-};
-
-export type Message = {
-    message: string;
-};
-
-export type TicketStatus = "Open" | "Reviewing" | "Closed";
+import { Ticket, TicketStatus } from "../_types/tickets";
+import { Message, Answer } from "../_types/message";  
 
 const TicketContext = createContext<{
     tickets: Ticket[] | null;
