@@ -1,8 +1,9 @@
 import axios from "axios";
 
+const url = process.env.NEXT_PUBLIC_URL
 
 export const client = axios.create({
-    baseURL: process.env.NEXT_PRIVATE_API_URL,
+    baseURL: url,
     withCredentials: true,
     timeout: 8000
 });

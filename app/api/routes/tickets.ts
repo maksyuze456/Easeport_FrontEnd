@@ -39,8 +39,15 @@ export async function setAnswer(
     answer: Message,
     ticketId: number
 ): Promise<ApiResult<Message>> {
-    const { data } = await client.post(`/tickets/setAnswer/${ticketId}`, answer);
-    return normalizeResponse<Message>(data);
+    try {
+        const response = await client.post(`/tickets/setAnswer/${ticketId}`, answer);
+        return normalizeResponse<Message>(response.data, response.status);
+    } catch (err: any) {
+        return normalizeResponse<Message>(
+            err.response?.data,
+            err.response?.status
+        );
+    }
 }
 
 export async function sendAnswer(

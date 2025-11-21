@@ -8,12 +8,15 @@ import {
 } from "react";
 
 import { Ticket, TicketStatus } from "../_types/tickets";
-import { Message, Answer } from "../_types/message";  
+import { Message, Answer } from "../_types/message";
+import { ApiResult } from "../api/utils/response";
 
-const TicketContext = createContext<{
+
+export interface TicketContextType {
     tickets: Ticket[] | null;
     myTickets: Ticket[] | null;
     singleTicket: Ticket | undefined;
+
     refetch: (ticketStatus: TicketStatus) => Promise<void>;
     refetchSingleTicket: (ticketId: number) => Promise<void>;
     setAnswer: (answer: Answer, ticketId: number) => Promise<Answer>;
@@ -21,10 +24,23 @@ const TicketContext = createContext<{
     refetchMyTickets: (ticketStatus: TicketStatus) => Promise<void>;
     closeTicket: (ticketId: number) => Promise<Message>;
     sendAnswer: (ticketId: number, ticketMessageId?: number) => Promise<Message>;
-}>({
+}
+
+import {
+    getTicketsByStatus,
+    getTicketById,
+    getMyTickets,
+    assignTicket,
+    setAnswer,
+    sendAnswer,
+    closeTicket
+} from "../api/routes/tickets";
+
+const TicketContext = createContext<TicketContextType>({
     tickets: null,
     myTickets: null,
     singleTicket: undefined,
+
     refetch: async () => { },
     refetchSingleTicket: async () => { },
     setAnswer: async (): Promise<Answer> => {
@@ -46,161 +62,93 @@ export function TicketProvider({ children }: { children: React.ReactNode }) {
     const [myTickets, setMyTickets] = useState<Ticket[] | null>(null);
     const [singleTicket, setSingleTicket] = useState<Ticket>();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
-    const fetchTickets = async (ticketStatus: TicketStatus) => {
-        try {
-            const res = await fetch(
-                `${apiUrl}/api/tickets/getAllByStatus/${ticketStatus}`,
-                {
-                    method: "GET",
-                    credentials: "include",
-                }
-            );
-            if (!res.ok)
-                throw new Error(
-                    "Error while fetching tickets. Errormessage: " + (await res.json())
-                );
 
-            const data = await res.json();
-            setTickets(data);
-            setCurrentStatus(ticketStatus);
-        } catch (err) {
-            console.log(err);
+
+    const fetchTickets = async (ticketStatus: TicketStatus) => {
+
+        const result = await getTicketsByStatus(ticketStatus);
+
+        if (!result.ok) {
+            console.error(result.error);
+            return;
         }
+
+        setTickets(result.data);
+        setCurrentStatus(ticketStatus);
+
     };
 
     const fetchTicket = async (ticketId: number) => {
-        try {
-            const res = await fetch(`${apiUrl}/api/tickets/${ticketId}`, {
-                method: "GET",
-                credentials: "include",
-            });
-            const data: Ticket = await res.json();
-            if (!res.ok) throw new Error();
 
-            setSingleTicket(data);
-        } catch (err) {
-            console.log(err);
+        const result = await getTicketById(ticketId);
+
+        if (!result.ok) {
+            console.error(result.error);
+            return;
         }
+
+        setSingleTicket(result.data);
     };
 
     const fetchMyTickets = async (ticketStatus: TicketStatus) => {
-        try {
-            const res = await fetch(
-                `${apiUrl}/api/tickets/employeeTickets?status=${ticketStatus}`,
-                {
-                    method: "GET",
-                    credentials: "include",
-                }
-            );
-            if (!res.ok)
-                throw new Error(
-                    "Error while fetching tickets. Error message: " + (await res.json())
-                );
 
-            const data = await res.json();
-            setMyTickets(data);
-        } catch (err) {
-            console.log(err);
+        const result = await getMyTickets(ticketStatus);
+
+        if (!result.ok) {
+            console.error(result.error);
+            return;
         }
+
+        setMyTickets(result.data);
     };
 
     const fetchAssignTicket = async (ticketId: number) => {
-        try {
-            const res = await fetch(`${apiUrl}/api/tickets/assign/${ticketId}`, {
-                method: "POST",
-                credentials: "include",
-            });
-
-            const data = await res.json();
-            fetchTickets(currentStatus);
-        } catch (err) {
-            console.log(err);
+        const result = await assignTicket(ticketId);
+        if (!result.ok) {
+            console.error(result.error);
+            return;
         }
+        fetchTickets(currentStatus);
     };
 
     const fetchSetAnswer = async (
         answer: Answer,
         ticketId: number
     ): Promise<Answer> => {
-        try {
-            const res = await fetch(`${apiUrl}/api/tickets/setAnswer/${ticketId}`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(answer),
-            });
+        const result = await setAnswer(answer, ticketId);
 
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data);
-
-            return data as Answer;
-        } catch (err) {
-            console.log(err);
-            throw err;
+        if (!result.ok) {
+            console.log(result);
+            console.error(result.error);
+            throw new Error(result.error);
         }
+
+        return result.data;
     };
 
     const fetchSendAnswer = async (
         ticketId: number,
         ticketMessageId?: number
     ): Promise<Message> => {
-        if (ticketMessageId) {
-            try {
-                const res = await fetch(
-                    `${apiUrl}/api/tickets/sendAnswer/${ticketId}/reply/${ticketMessageId}`,
-                    {
-                        method: "POST",
-                        credentials: "include",
-                    }
-                );
+        const result = await sendAnswer(ticketId, ticketMessageId);
 
-                const data = await res.json();
-
-                if (!res.ok) throw new Error(data);
-
-                return data as Message;
-            } catch (err) {
-                console.log(err);
-                throw err;
-            }
-        } else {
-            try {
-                const res = await fetch(
-                    `${apiUrl}/api/tickets/sendAnswer/${ticketId}`,
-                    {
-                        method: "POST",
-                        credentials: "include",
-                    }
-                );
-
-                const data = await res.json();
-
-                if (!res.ok) throw new Error(data);
-
-                return data as Message;
-            } catch (err) {
-                console.log(err);
-                throw err;
-            }
+        if (!result.ok) {
+            console.error(result.error);
+            throw new Error(result.error);
         }
+
+        return result.data;
     };
 
     const fetchCloseTicket = async (ticketId: number) => {
-        try {
-            const res = await fetch(`${apiUrl}/api/tickets/close/${ticketId}`, {
-                method: "PUT",
-                credentials: "include",
-            });
+        const result = await closeTicket(ticketId);
 
-            const resMessage: Message = await res.json();
-
-            return resMessage as Message;
-        } catch (err) {
-            return err as Message;
+        if (!result.ok) {
+            console.error(result.error);
+            throw new Error(result.error);
         }
+
+        return result.data;
     };
 
     useEffect(() => {

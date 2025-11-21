@@ -9,17 +9,13 @@ import {
 } from "@mantine/core";
 import { useParams } from "next/navigation";
 import { useForm } from "@mantine/form";
-import {
-  useTickets,
-} from "../../../../_context/TicketProvider";
+import { useTickets } from "../../../../_context/TicketProvider";
 import { Answer, Message } from "../../../../_types/message";
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../../../_context/AuthProvider";
 import { IconX } from "@tabler/icons-react";
-import {
-  TicketMessage,
-  useTicketConversation,
-} from "../../../../_context/TicketConversationProvider";
+import { useTicketConversation } from "../../../../_context/TicketConversationProvider";
+import { TicketMessage } from "../../../../_types/tickets";
 import { useWebSocket } from "../../../../_context/WebSocketContextProvider";
 
 export default function ConversationTable({
@@ -33,10 +29,8 @@ export default function ConversationTable({
   const ticketId = Number(params.ticketId);
 
   const { loggedInUser } = useAuthContext();
-  const { setAnswer, refetchSingleTicket, singleTicket, closeTicket } =
-    useTickets();
-  const { ticketConversation, refetchConversation, sendAnswer } =
-    useTicketConversation();
+  const { setAnswer, refetchSingleTicket, singleTicket, closeTicket } = useTickets();
+  const { ticketConversation, refetchConversation, sendAnswer } = useTicketConversation();
 
   const [loadingConversation, setLoadingConversation] = useState(false);
   const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);

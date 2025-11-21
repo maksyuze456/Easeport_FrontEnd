@@ -1,4 +1,12 @@
-
+export type TicketMessage = {
+  ticketMessageId: number;
+  ticketId: number;
+  sender: string;
+  body: string;
+  localDateTime: string;
+  emailMessageId: string;
+  inReplyTo: string | null;
+};
 
 export type Ticket = {
     id: number;

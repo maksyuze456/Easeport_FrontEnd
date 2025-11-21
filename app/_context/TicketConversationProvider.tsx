@@ -4,22 +4,12 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
-
-export type TicketMessage = {
-  ticketMessageId: number;
-  ticketId: number;
-  sender: string;
-  body: string;
-  localDateTime: string;
-  emailMessageId: string;
-  inReplyTo: string | null;
-};
-export type Message = {
-  message: string;
-};
+import { getConversation } from "../api/routes/ticketConversation";
+import { TicketMessage } from "../_types/tickets";
+import { Message } from "../_types/message";
+import { sendAnswer } from "../api/routes/tickets";
 
 const TicketConversationContext = createContext<{
   ticketConversation: TicketMessage[] | [];
@@ -42,83 +32,37 @@ export function TicketConversationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [ticketConversation, setTicketConversation] = useState<TicketMessage[]>(
-    []
-  );
+  const [ticketConversation, setTicketConversation] = useState<TicketMessage[]>([]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
-  const fetchConversation = async (
-    ticketId: number,
-    loadingConversation?: boolean,
-    setLoadingConversation?: Dispatch<SetStateAction<boolean>>
-  ) => {
-    try {
-      const res = await fetch(
-        `${apiUrl}/api/ticketMessages/getConversation/${ticketId}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
-      console.log("conversation loaded: " + data);
-      if (!res.ok) {
-        console.error("Failed fetching conversation", data);
-        setTicketConversation([]);
-        return;
-      }
+  const fetchConversation = async (ticketId: number) => {
 
-      setTicketConversation(data);
-    } catch (err) {
-      console.error("Error fetching conversation", err);
-      setTicketConversation([]);
+    const result = await getConversation(ticketId);
+
+    if (!result.ok) {
+      console.error(result.error);
+      setTicketConversation([])
+      return;
     }
+
+    setTicketConversation(result.data);
   };
 
   const fetchSendAnswer = async (
     ticketId: number,
     ticketMessageId?: number
-  ) => {
-    if (ticketMessageId) {
-      try {
-        const res = await fetch(
-          `${apiUrl}/api/tickets/sendAnswer/${ticketId}/reply/${ticketMessageId}`,
-          {
-            method: "POST",
-            credentials: "include",
-          }
-        );
+  ): Promise<Message> => {
 
-        const data = await res.json();
+    const result = await sendAnswer(ticketId, ticketMessageId);
 
-        if (!res.ok) throw new Error(data);
-
-        return data as Message;
-      } catch (err) {
-        console.log(err);
-        throw err;
-      }
-    } else {
-      try {
-        const res = await fetch(
-          `${apiUrl}/api/tickets/sendAnswer/${ticketId}`,
-          {
-            method: "POST",
-            credentials: "include",
-          }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data);
-
-        return data as Message;
-      } catch (err) {
-        console.log(err);
-        throw err;
-      }
+    if (!result.ok) {
+      console.error(result.error);
+      throw new Error(result.error);
     }
+
+    return result.data;
+
   };
 
   return (

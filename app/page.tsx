@@ -2,16 +2,18 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Center, Loader } from "@mantine/core"
-import { AuthProvider, useAuthContext } from "./_context/AuthProvider";
+import { useAuthContext } from "./_context/AuthProvider";
 
 export default function HomePage() {
   const { loggedInUser, loading } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !loggedInUser) {
+    if (loading) return;
+
+    if (!loggedInUser) {
       router.push("/login");
-    } else if (!loading && loggedInUser) {
+    } else {
       router.push("/dashboard");
     }
   }, [loading, loggedInUser, router]);

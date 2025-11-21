@@ -1,15 +1,11 @@
 'use client';
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { User } from './EmployeeProvider';
+import { User, LoggedInUser } from '../_types/users';
+import { getUser } from "../api/routes/auth";
 
-export type LoggedInUser = {
-    id: number
-    username: string
-    role: string;
-}
 
 const AuthContext = createContext<{
-    loggedInUser: LoggedInUser | null;
+    loggedInUser: User | null;
     refetch: () => Promise<void>;
     loading: boolean;
 }>({
@@ -22,7 +18,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
     const isFetching = useRef(false);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+    const url = process.env.NEXT_PUBLIC_URL;
+
 
     const fetchUser = useCallback(async () => {
         // Prevent multiple simultaneous fetches
@@ -31,35 +29,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         isFetching.current = true;
-        try {
-            const response = await fetch(`${apiUrl}/api/auth/me`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                setLoggedInUser(null);
-                setLoadingAuth(false);
-                throw new Error("Error while fetching logged in user: " + response.status);
-            }
 
+        const result = await getUser();
 
-            const data = await response.json();
-            setLoggedInUser(data);
-            if (data?.role) {
-                document.cookie = `role=${data.role}; path=/; samesite=lax`;
-                console.log(document.cookie);
-            };
+        if (!result.ok) {
+            console.log(result)
+            console.error(result.error)
+            setLoggedInUser(null);
             setLoadingAuth(false);
-
-        } catch (err) {
-            console.log(err);
-        } finally {
             isFetching.current = false;
+            return;
         }
-    }, [apiUrl]);
+
+        setLoggedInUser(result.data);
+        setLoadingAuth(false);
+        isFetching.current = false;
+
+    }, [url]);
 
     useEffect(() => {
-        fetchUser();
+        if(!loggedInUser) fetchUser();
     }, [fetchUser]);
 
     return (
