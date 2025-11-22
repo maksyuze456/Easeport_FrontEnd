@@ -9,14 +9,13 @@ import {
 } from "@mantine/core";
 import { useParams } from "next/navigation";
 import { useForm } from "@mantine/form";
-import { useTickets } from "../../../../_context/TicketProvider";
 import { Answer, Message } from "../../../../_types/message";
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../../../_context/AuthProvider";
 import { IconX } from "@tabler/icons-react";
-import { useTicketConversation } from "../../../../_context/TicketConversationProvider";
 import { TicketMessage } from "../../../../_types/tickets";
 import { useWebSocket } from "../../../../_context/WebSocketContextProvider";
+import { useTicketsRq } from "../../../../api/routes/tickets/hooks/useTickets";
 
 export default function ConversationTable({
   onSuccess,
@@ -27,10 +26,7 @@ export default function ConversationTable({
 }) {
   const params = useParams();
   const ticketId = Number(params.ticketId);
-
   const { loggedInUser } = useAuthContext();
-  const { setAnswer, refetchSingleTicket, singleTicket, closeTicket } = useTickets();
-  const { ticketConversation, refetchConversation, sendAnswer } = useTicketConversation();
 
   const [loadingConversation, setLoadingConversation] = useState(false);
   const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);
@@ -40,6 +36,9 @@ export default function ConversationTable({
   const prevTicketId = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { getConversationById, getTicketById, setAnswer, sendAnswer, closeTicket  } = useTicketsRq();
+  const { data: ticketConversation, isLoading, refetch: refetchConversation } = getConversationById(ticketId);
+  const { data: singleTicket, refetch: refetchSingleTicket } = getTicketById(ticketId);
 
   const isClosed = singleTicket?.status?.toLowerCase() === "closed";
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
@@ -67,7 +66,7 @@ export default function ConversationTable({
     const unsubscribe = subscribe(`/user/queue/ticket-messages`, () => {
       // Only refetch if we're still on the same ticket
       if (ticketId && !Number.isNaN(ticketId)) {
-        refetchConversation(ticketId);
+        refetchConversation();
       }
     });
 
@@ -89,25 +88,21 @@ export default function ConversationTable({
     if (isClosed) return;
     try {
       const answer: Answer = form.getValues();
-      const resAnswerMessage = await setAnswer(answer, ticketId);
-      refetchSingleTicket(ticketId);
+      const resAnswerMessage = await setAnswer.mutateAsync({ answer, ticketId });
+      refetchConversation();
 
       let resSendMessage;
 
       if (replyTo != null) {
-        resSendMessage = await sendAnswer(ticketId, replyTo.ticketMessageId);
+        resSendMessage = await sendAnswer.mutateAsync({ ticketId, ticketMessageId: replyTo.ticketMessageId });
       } else {
-        resSendMessage = await sendAnswer(ticketId);
+        resSendMessage = await sendAnswer.mutateAsync({ ticketId });
       }
 
       if (onSuccess) {
         onSuccess(resSendMessage);
         form.reset();
-        refetchConversation(
-          ticketId,
-          loadingConversation,
-          setLoadingConversation
-        );
+        refetchConversation();
       }
     } catch (err) {
       console.log(err);
@@ -116,8 +111,8 @@ export default function ConversationTable({
 
   const handleCloseTicket = async () => {
     try {
-      const res = await closeTicket(ticketId);
-      refetchSingleTicket(ticketId);
+      const res = await closeTicket.mutateAsync({ ticketId });
+      refetchSingleTicket();
 
       if (onCloseTicket) {
         onCloseTicket(res);
@@ -140,11 +135,7 @@ export default function ConversationTable({
 
   useEffect(() => {
     if (ticketId && !Number.isNaN(ticketId)) {
-      refetchConversation(
-        ticketId,
-        loadingConversation,
-        setLoadingConversation
-      );
+      refetchConversation();
     }
   }, [ticketId]);
 
@@ -158,7 +149,7 @@ export default function ConversationTable({
           <div
             style={{ display: "flex", flexDirection: "column", gap: "16px" }}
           >
-            {ticketConversation.map((message: TicketMessage) => {
+            {ticketConversation?.map((message: TicketMessage) => {
               const isCurrentUser = message.sender === currentUser;
               // find the message this one replies to (if any)
               const repliedTo = ticketConversation.find(

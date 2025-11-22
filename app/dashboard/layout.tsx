@@ -12,12 +12,19 @@ import { Message } from '../_types/message';
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
 import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
 import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient();
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
+    <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <DashboardContent>{children}</DashboardContent>
     </AuthProvider>
+    <ReactQueryDevtools/>
+    </QueryClientProvider>
   );
 }
 

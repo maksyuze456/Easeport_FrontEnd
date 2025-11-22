@@ -34,7 +34,7 @@ import {
     setAnswer,
     sendAnswer,
     closeTicket
-} from "../api/routes/tickets";
+} from "../api/routes/tickets/tickets";
 
 const TicketContext = createContext<TicketContextType>({
     tickets: null,

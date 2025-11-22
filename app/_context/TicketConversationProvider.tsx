@@ -6,10 +6,10 @@ import {
   useContext,
   useState,
 } from "react";
-import { getConversation } from "../api/routes/ticketConversation";
+import { getConversation } from "../api/routes/tickets/ticketConversation";
 import { TicketMessage } from "../_types/tickets";
 import { Message } from "../_types/message";
-import { sendAnswer } from "../api/routes/tickets";
+import { sendAnswer } from "../api/routes/tickets/tickets";
 
 const TicketConversationContext = createContext<{
   ticketConversation: TicketMessage[] | [];
@@ -27,57 +27,3 @@ const TicketConversationContext = createContext<{
   },
 });
 
-export function TicketConversationProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [ticketConversation, setTicketConversation] = useState<TicketMessage[]>([]);
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
-
-  const fetchConversation = async (ticketId: number) => {
-
-    const result = await getConversation(ticketId);
-
-    if (!result.ok) {
-      console.error(result.error);
-      setTicketConversation([])
-      return;
-    }
-
-    setTicketConversation(result.data);
-  };
-
-  const fetchSendAnswer = async (
-    ticketId: number,
-    ticketMessageId?: number
-  ): Promise<Message> => {
-
-    const result = await sendAnswer(ticketId, ticketMessageId);
-
-    if (!result.ok) {
-      console.error(result.error);
-      throw new Error(result.error);
-    }
-
-    return result.data;
-
-  };
-
-  return (
-    <TicketConversationContext.Provider
-      value={{
-        ticketConversation: ticketConversation,
-        refetchConversation: fetchConversation,
-        sendAnswer: fetchSendAnswer,
-      }}
-    >
-      {children}
-    </TicketConversationContext.Provider>
-  );
-}
-
-export function useTicketConversation() {
-  return useContext(TicketConversationContext);
-}

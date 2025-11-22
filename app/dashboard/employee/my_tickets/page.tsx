@@ -3,33 +3,29 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
 import TicketsTable from "../_TicketsTable/TicketsTable";
-import { useTickets } from '../../../_context/TicketProvider';
 import { TicketStatus } from "../../../_types/tickets";
-import { useEffect } from 'react';
 import {
   IconPencil
 } from '@tabler/icons-react';
+import { useTicketsRq } from "../../../api/routes/tickets/hooks/useTickets";
 
 export default function MyTicketsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawStatus = searchParams.get("status");
   const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
-  const { myTickets, refetchMyTickets } = useTickets();
-
-
+  const { getMyTicketsByStatus } = useTicketsRq();
+  
   const status: TicketStatus =
-    rawStatus && validStatuses.includes(rawStatus as TicketStatus)
-      ? (rawStatus as TicketStatus)
-      : 'Reviewing';
+  rawStatus && validStatuses.includes(rawStatus as TicketStatus)
+  ? (rawStatus as TicketStatus)
+  : 'Reviewing';
 
-  useEffect(() => {
-    refetchMyTickets(status);
-  }, [status]);
+  const { data, isLoading, refetch } = getMyTicketsByStatus(status);
 
 
   const handleUpdate = async () => {
-    await refetchMyTickets(status);
+    refetch();
     router.push("/dashboard/employee/my_tickets");
   };
 
@@ -57,7 +53,7 @@ export default function MyTicketsPage() {
           <TicketsTable
             ticketStatus={status}
             onUpdate={handleUpdate}
-            myTickets={myTickets}
+            myTickets={data}
             menuActions={[
               {
                 label: "Details", icon: <IconPencil size={16} />, onClick: (ticket) => {
@@ -68,7 +64,7 @@ export default function MyTicketsPage() {
           />
         )}
         {status === 'Closed' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleUpdate} myTickets={myTickets}
+          <TicketsTable ticketStatus={status} onUpdate={handleUpdate} myTickets={data}
             menuActions={[
               {
                 label: "Details", icon: <IconPencil size={16} />, onClick: (ticket) => {
