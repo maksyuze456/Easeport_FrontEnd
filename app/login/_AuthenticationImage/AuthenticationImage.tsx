@@ -25,15 +25,12 @@ export function AuthenticationImage() {
 
 
         try {
-          console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
-          console.log('Full URL:', `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin`)
             const res = await fetch(`${apiUrl}/api/auth/signin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({username, password}),
                 credentials: 'include'
             });
-            console.log(apiUrl);
             if (!res.ok) {
                 throw new Error('Login failed');
             }
