@@ -5,20 +5,20 @@ import { Center, Loader } from "@mantine/core"
 import { useAuthContext } from "./_context/AuthProvider";
 
 export default function HomePage() {
-  const { loggedInUser, loading } = useAuthContext();
+  const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    if (authLoading) return;
 
     if (!loggedInUser) {
       router.push("/login");
     } else {
       router.push("/dashboard");
     }
-  }, [loading, loggedInUser, router]);
+  }, [authLoading, loggedInUser, router]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <Center h="100vh">
         <Loader />
