@@ -7,7 +7,7 @@ on:
     branches:
       - staging
   workflow_dispatch:
-    
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,7 +17,6 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     environment: staging
-    
 
     steps:
       - name: Checkout code
@@ -32,13 +31,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Debug - Check secret
-        run: |
-          echo "Secret value: '${{ secrets.NEXT_PUBLIC_API_URL }}'"
-          echo "Secret length: ${#NEXT_PUBLIC_API_URL}"
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-
       - name: Build & Push image
         uses: docker/build-push-action@v6
         with:
@@ -49,12 +41,13 @@ jobs:
             ${{ secrets.IMAGE_NAME }}:${{ github.ref_name }}
           build-args: |
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-
+            NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
+            NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
 
   deploy:
     name: Deploy on Hetzner VM
     runs-on: ubuntu-latest
-    needs: [ docker-image ]
+    needs: [docker-image]
     environment: staging
 
     steps:
@@ -66,8 +59,13 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Create .env file
-        run: echo "${{ secrets.NEXT_PUBLIC_API_URL }}" > .env
+      - name: Create .env file for deploy
+        run: |
+          cat <<EOF > .env
+          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
+          NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
+          EOF
 
       - name: Copy Docker Compose files
         run: |
