@@ -1,177 +1,145 @@
 'use client';
 
-import { useForm } from "@mantine/form";
-import { useTickets, } from "../../../../_context/TicketProvider";
-import { Answer, Message } from "../../../../_types/message";
 import { Ticket } from "../../../../_types/tickets";
-import { Badge, Table, Text, Textarea, Flex, Button } from '@mantine/core';
-import { priorityColors, ticketStatusColors } from "../../_TicketsTable/TicketsTable";
-import { IconX, IconCheck } from '@tabler/icons-react';
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from 'react';
+import { Answer, Message } from "../../../../_types/message";
+import {
+  Badge,
+  Table,
+  Text,
+} from "@mantine/core";
 
+import {
+  priorityColors,
+  ticketStatusColors,
+} from "../../_TicketsTable/TicketsTable";
 
 export default function ViewTicket({
-  ticket, userId, onSuccess, onCloseTicket
+  ticket,
 }: {
-  ticket: Ticket,
-  userId?: number,
-  onSuccess?: (res: Answer) => void;
+  ticket: Ticket;
+  userId?: number;
+  onSuccess?: (res: Answer | Message) => void;
   onCloseTicket?: (res: Message) => void;
 }) {
-  const router = useRouter();
-  const { setAnswer, refetchSingleTicket, closeTicket } = useTickets();
-  const checkIcon = <IconCheck size={20} />;
-  const xIcon = <IconX size={20} />;
-  const isClosed = ticket.status?.toLowerCase() === 'closed';
-  const prevTicketId = useRef<number | null>(null);
-
-  const form = useForm({
-    mode: 'controlled',
-    initialValues: {
-      message: ticket.answer || ""
-    }
-  });
-
-  useEffect(() => {
-    if (prevTicketId.current !== ticket.id) {
-      form.setValues({ message: ticket.answer || "" });
-      prevTicketId.current = ticket.id;
-    }
-  }), [ticket.id];
-
-  const handleSubmit = async (values: typeof form.values, e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (isClosed) return;
-    try {
-      const answer: Answer = form.getValues();
-      const resMessage = await setAnswer(answer, ticket.id);
-      refetchSingleTicket(ticket.id);
-
-      if (onSuccess) {
-        onSuccess(resMessage);
-      }
-
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleCloseTicket = async (ticketId: number) => {
-
-    try {
-      const res = await closeTicket(ticketId);
-
-      refetchSingleTicket(ticketId);
-
-      if (onCloseTicket) {
-        onCloseTicket(res);
-      }
-
-
-    } catch (err) {
-      console.log(err as Message);
-    }
-
-  };
-
-  let row;
-
-  if (ticket) {
-    row = () => (
-      <>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Subject</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text fz="sm">{ticket.subject}</Text>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Sender</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text fz="sm">{ticket.from}</Text>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Name</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text fz="sm">{ticket.name}</Text>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Type</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text fz="sm">{ticket.type}</Text>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Queue</Text>
-          </Table.Td>
-          <Table.Td>
-            <Text fz="sm">{ticket.queueType}</Text>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Priority</Text>
-          </Table.Td>
-          <Table.Td>
-            <Badge color={priorityColors[ticket.priority.toLowerCase()]} variant="light">
-              {ticket.priority}
-            </Badge>
-          </Table.Td>
-        </Table.Tr>
-        <Table.Tr>
-          <Table.Td>
-            <Text fz="sm" fw={500}>Status</Text>
-          </Table.Td>
-          <Table.Td>
-            <Badge color={ticketStatusColors[ticket.status.toLowerCase()]} variant="light">
-              {ticket.status}
-            </Badge>
-          </Table.Td>
-        </Table.Tr>
-        <Text fz="sm" ml={"xs"} mt={"xs"} fw={500}>Body</Text>
-        <Table.Tr>
-          <Table.Td >
-            <Text fz="sm">{ticket.body}</Text>
-          </Table.Td>
-        </Table.Tr>
-
-      </>
-    );
-  } else {
-    row = () => (
-      <Table.Tr>
-        <Table.Td>
-          <Text fz="sm" fw={500}>Nothing to view</Text>
-        </Table.Td>
-      </Table.Tr>
-    );
-  }
 
   return (
-    <>
-      <Table.ScrollContainer minWidth={400}>
-        <Table horizontalSpacing="xs" verticalSpacing="xs" style={{ tableLayout: 'fixed' }}>
-          <colgroup>
-            <col style={{ width: '400px' }} />
-            <col />
-          </colgroup>
-          <Table.Tbody>
-            {row()}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-    </>
+    <Table.ScrollContainer minWidth={400}>
+      <Table
+        horizontalSpacing="xs"
+        verticalSpacing="xs"
+        style={{ tableLayout: "fixed" }}
+      >
+        <colgroup>
+          <col style={{ width: "400px" }} />
+          <col />
+        </colgroup>
+
+        <Table.Tbody>
+          {/* Subject */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Subject
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text fz="sm">{ticket.subject}</Text>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Sender */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Sender
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text fz="sm">{ticket.from}</Text>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Name */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Name
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text fz="sm">{ticket.name}</Text>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Type */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Type
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text fz="sm">{ticket.type}</Text>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Queue */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Queue
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text fz="sm">{ticket.queueType}</Text>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Priority */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Priority
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Badge
+                color={priorityColors[ticket.priority.toLowerCase()]}
+                variant="light"
+              >
+                {ticket.priority}
+              </Badge>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Status */}
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm" fw={500}>
+                Status
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Badge
+                color={ticketStatusColors[ticket.status.toLowerCase()]}
+                variant="light"
+              >
+                {ticket.status}
+              </Badge>
+            </Table.Td>
+          </Table.Tr>
+
+          {/* Body */}
+          <Text fz="sm" ml="xs" mt="xs" fw={500}>
+            Body
+          </Text>
+          <Table.Tr>
+            <Table.Td>
+              <Text fz="sm">{ticket.body}</Text>
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
+      </Table>
+    </Table.ScrollContainer>
   );
 }

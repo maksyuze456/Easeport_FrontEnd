@@ -15,14 +15,24 @@ import {
 } from "@mantine/core";
 
 import { Ticket, TicketStatus } from "../../../_types/tickets";
-import { useWebSocket } from "../../../_context/WebSocketContextProvider";
-import { useTicketsRq } from "../../../api/routes/tickets/hooks/useTickets";
-import { useEffect } from "react";
+
+type NewTicketsTableProps = {
+  ticketStatus?: TicketStatus;
+  data: Ticket[] | undefined;
+  isLoading: boolean;
+  onUpdate?: () => void;
+  onAssign?: (ticketId: number) => Promise<void>;
+  menuActions?: {
+    label: string;
+    icon: React.ReactNode;
+    onClick: (ticket: Ticket) => void;
+  }[];
+}
 
 type TicketsTableProps = {
   ticketStatus: TicketStatus;
   myTickets?: Ticket[] | null;
-  onUpdate: () => void;
+  onUpdate?: () => void;
   menuActions?: {
     label: string;
     icon: React.ReactNode;
@@ -43,28 +53,18 @@ export const ticketStatusColors: Record<string, string> = {
 };
 
 export default function TicketsTable({
-  ticketStatus,
-  myTickets,
+  data,
+  isLoading,
   onUpdate,
+  onAssign,
   menuActions,
-}: TicketsTableProps) {
-  const { subscribe } = useWebSocket();
-  const { getTicketsByStatus, assignTicket } = useTicketsRq();
+}: NewTicketsTableProps) {
 
-  const { data, isLoading, refetch } = getTicketsByStatus(ticketStatus);
 
-  // websocket triggers refresh
-  // invalidate or refetch → both work, we'll keep refetch since you already use it
-  useEffect(() => {
-    subscribe("/topic/new-ticket", () => refetch());
-    subscribe("/topic/assign", () => refetch());
-  }, []);
-
-  const ticketsToShow = myTickets ?? data ?? [];
 
   if (isLoading) return <div>Loading...</div>;
 
-  const rows = ticketsToShow.map((ticket) => (
+  const rows = (data ?? []).map((ticket) => (
     <Table.Tr key={ticket.id}>
       <Table.Td>
         <Group gap="sm">
@@ -124,9 +124,7 @@ export default function TicketsTable({
                     label: "Accept ticket",
                     icon: <IconBriefcase2 size={16} />,
                     onClick: () => {
-                      assignTicket.mutate(ticket.id, {
-                        onSuccess: () => onUpdate(),
-                      });
+                      onAssign && onAssign(ticket.id)
                     },
                   },
                 ]

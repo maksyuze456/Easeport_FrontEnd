@@ -4,13 +4,15 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
 import TicketsTable from "../_TicketsTable/TicketsTable";
 import { TicketStatus } from "../../../_types/tickets";
-import { useTicketsRq } from "../../../api/routes/tickets/hooks/useTickets";
+import { useTicketsByStatus, useAssignTicket } from "../../../api/routes/tickets/hooks/useTicketQueries";
+import { useWebSocket } from "../../../_context/WebSocketContextProvider";
+import { useEffect } from "react";
+import { Message } from "../../../_types/message";
 
 export default function TicketsPage() {
   const router = useRouter();
   const params = useSearchParams();
-  const { getTicketsByStatus } = useTicketsRq();
-
+  const { subscribe } = useWebSocket();
   // derive status from URL
   const rawStatus = params.get("status");
   const valid: TicketStatus[] = ["Open", "Reviewing", "Closed"];
@@ -20,15 +22,25 @@ export default function TicketsPage() {
       ? (rawStatus as TicketStatus)
       : "Open";
 
-  // query for tickets automatically re-fetches when `status` changes
-  const { data, isLoading, refetch } = getTicketsByStatus(status);
+  const ticketsQuery = useTicketsByStatus(status);
+  const { data, isLoading, refetch } = ticketsQuery;
+  const assignMutation = useAssignTicket();
 
-  // called only when ticket is assigned
-  const handleWhenTicketAssigned = () => {
-    // mutation already invalidates -> this refetch is optional
-    refetch();
-    router.push(`/dashboard/employee/tickets?status=${status}`);
+  const handleAssign = async (ticketId: number) => {
+
+    const res: Message = await assignMutation.mutateAsync(ticketId)
+    console.log(res.message);
+
   };
+  // Web socket subscriptions
+  /*  
+  useEffect(() => {
+    subscribe("/topic/new-ticket", () => refetch());
+    subscribe("/topic/assign", () => refetch());
+  }, []);
+  
+  */
+
 
   return (
     <div style={{ padding: "16px" }}>
@@ -57,8 +69,9 @@ export default function TicketsPage() {
           <div>Loading...</div>
         ) : (
           <TicketsTable
-            ticketStatus={status}
-            onUpdate={handleWhenTicketAssigned}
+            data={data}
+            isLoading={isLoading}
+            onAssign={handleAssign}
           />
         )}
       </Center>

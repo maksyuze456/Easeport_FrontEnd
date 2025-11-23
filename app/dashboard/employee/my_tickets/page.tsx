@@ -7,22 +7,23 @@ import { TicketStatus } from "../../../_types/tickets";
 import {
   IconPencil
 } from '@tabler/icons-react';
-import { useTicketsRq } from "../../../api/routes/tickets/hooks/useTickets";
+import { useMyTickets } from "../../../api/routes/tickets/hooks/useTicketQueries";
 
 export default function MyTicketsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawStatus = searchParams.get("status");
   const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
-  const { getMyTicketsByStatus } = useTicketsRq();
+
   
   const status: TicketStatus =
   rawStatus && validStatuses.includes(rawStatus as TicketStatus)
   ? (rawStatus as TicketStatus)
   : 'Reviewing';
 
-  const { data, isLoading, refetch } = getMyTicketsByStatus(status);
 
+  const myTicketsQuery = useMyTickets(status);
+    const { data, isLoading, refetch } = myTicketsQuery;
 
   const handleUpdate = async () => {
     refetch();
@@ -51,9 +52,9 @@ export default function MyTicketsPage() {
       <Center>
         {status === 'Reviewing' && (
           <TicketsTable
-            ticketStatus={status}
+            data={data}
+            isLoading={isLoading}
             onUpdate={handleUpdate}
-            myTickets={data}
             menuActions={[
               {
                 label: "Details", icon: <IconPencil size={16} />, onClick: (ticket) => {
@@ -64,7 +65,7 @@ export default function MyTicketsPage() {
           />
         )}
         {status === 'Closed' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleUpdate} myTickets={data}
+          <TicketsTable ticketStatus={status} onUpdate={handleUpdate} isLoading={isLoading} data={data}
             menuActions={[
               {
                 label: "Details", icon: <IconPencil size={16} />, onClick: (ticket) => {

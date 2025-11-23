@@ -1,3 +1,291 @@
+'use client';
+
+import {
+  Box,
+  Paper,
+  Text,
+  ScrollArea,
+  Button,
+  Textarea,
+  Flex,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useEffect, useRef, useState } from "react";
+import { useAuthContext } from "../../../../_context/AuthProvider";
+import { IconX } from "@tabler/icons-react";
+import { TicketMessage, Ticket } from "../../../../_types/tickets";
+
+type ConversationTableProps = {
+  ticket: Ticket | undefined;
+  conversation: TicketMessage[] | undefined;
+
+  isTicketLoading: boolean;
+  isConversationLoading: boolean;
+
+  onSendAnswer: (payload: { message: string; replyToId?: number }) => Promise<void>;
+  onCloseTicket: () => Promise<void>;
+};
+
+export default function ConversationTable({
+  ticket,
+  conversation,
+  isTicketLoading,
+  isConversationLoading,
+  onSendAnswer,
+  onCloseTicket,
+}: ConversationTableProps) {
+  const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
+
+  const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);
+  const [showReplyHighlight, setShowReplyHighlight] = useState(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const currentUser = loggedInUser?.username || "";
+  const isClosed = ticket?.status?.toLowerCase() === "closed";
+
+  const form = useForm({
+    mode: "controlled",
+    initialValues: {
+      message: "",
+    },
+  });
+
+  // auto-scroll to bottom when conversation changes
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [conversation]);
+
+  // handle sending messages
+  const handleSubmit = async (values: typeof form.values) => {
+    if (isClosed) return;
+
+    await onSendAnswer({
+      message: values.message,
+      replyToId: replyTo?.ticketMessageId,
+    });
+
+    form.reset();
+    setReplyTo(null);
+  };
+
+  const handleReply = (message: TicketMessage) => {
+    setReplyTo(message);
+    setTimeout(() => setShowReplyHighlight(true), 10);
+    setTimeout(() => textareaRef.current?.focus(), 80);
+  };
+
+  const cancelReply = () => {
+    setShowReplyHighlight(false);
+    setTimeout(() => setReplyTo(null), 180);
+  };
+
+  return (
+    <Box style={{ height: "700px", padding: "16px" }}>
+      <Paper shadow="xs" p="md">
+        <Text fw={500} size="lg" mb="md">
+          Conversation History
+        </Text>
+
+        <ScrollArea h={500} offsetScrollbars>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {conversation?.map((message) => {
+              const isCurrentUser = message.sender === currentUser;
+
+              // find parent message if this is a reply
+              const repliedTo = conversation.find(
+                (m) => m.emailMessageId === message.inReplyTo
+              );
+
+              return (
+                <div
+                  key={message.ticketMessageId}
+                  style={{
+                    display: "flex",
+                    justifyContent: isCurrentUser ? "flex-end" : "flex-start",
+                    width: "100%",
+                  }}
+                >
+                  <div style={{ maxWidth: "70%" }}>
+                    {repliedTo && (
+                      <div
+                        style={{
+                          marginBottom: 6,
+                          padding: "6px 8px",
+                          borderLeft: "3px solid rgba(34,139,230,0.9)",
+                          background: "#fbfdff",
+                          borderRadius: 8,
+                          color: "rgba(0,0,0,0.75)",
+                          fontSize: 13,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <Text size="xs" c="dimmed">
+                          In reply to {repliedTo.sender}:
+                        </Text>
+                        <Text
+                          size="sm"
+                          style={{
+                            maxWidth: 420,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {repliedTo.body}
+                        </Text>
+                      </div>
+                    )}
+
+                    <Paper
+                      shadow="sm"
+                      p="sm"
+                      style={{
+                        backgroundColor: isCurrentUser ? "#E3F2FD" : "#F5F5F5",
+                        borderRadius: "12px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text size="sm" c="dimmed" mb={4}>
+                          {message.sender}
+                        </Text>
+
+                        {!isClosed && (
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleReply(message);
+                            }}
+                            style={{ textDecoration: "none", cursor: "pointer" }}
+                          >
+                            <Text size="sm" c="dimmed" mb={4}>
+                              reply
+                            </Text>
+                          </a>
+                        )}
+                      </div>
+
+                      <Text>{message.body}</Text>
+
+                      <Text size="xs" c="dimmed" mt={4}>
+                        {new Date(message.localDateTime).toLocaleTimeString()}
+                      </Text>
+                    </Paper>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div ref={bottomRef} />
+          </div>
+        </ScrollArea>
+
+        <Paper shadow="xs" p="md" mt="md">
+          {replyTo && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "8px",
+                borderLeft: "4px solid #228be6",
+                marginBottom: "8px",
+                background: "#f7fbff",
+                borderRadius: 6,
+                transition: "transform 180ms ease, opacity 180ms ease",
+                transform: showReplyHighlight
+                  ? "translateY(0)"
+                  : "translateY(-6px)",
+                opacity: showReplyHighlight ? 1 : 0,
+              }}
+            >
+              <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                <Text size="xs" c="dimmed">
+                  Replying to {replyTo.sender}
+                </Text>
+                <Text
+                  size="sm"
+                  style={{
+                    maxWidth: 420,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {replyTo.body}
+                </Text>
+              </div>
+
+              <button
+                type="button"
+                onClick={cancelReply}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                aria-label="Cancel reply"
+              >
+                <IconX size={16} />
+              </button>
+            </div>
+          )}
+
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Textarea
+              styles={{
+                input: { width: "100%", height: "100px", resize: "vertical" },
+                wrapper: { width: "100%" },
+              }}
+              required
+              placeholder="Type your response..."
+              {...form.getInputProps("message")}
+              ref={textareaRef}
+              disabled={isClosed}
+            />
+
+            <Flex justify="flex-end" gap="md" mt="md">
+              <Button
+                variant="default"
+                size="sm"
+                radius="md"
+                onClick={onCloseTicket}
+                disabled={isClosed}
+              >
+                Close Ticket
+              </Button>
+
+              <Button
+                type="submit"
+                size="sm"
+                radius="md"
+                disabled={isClosed}
+              >
+                Send Response
+              </Button>
+            </Flex>
+          </form>
+        </Paper>
+      </Paper>
+    </Box>
+  );
+}
+
+
+/*
+
 import {
   Box,
   Paper,
@@ -13,22 +301,35 @@ import { Answer, Message } from "../../../../_types/message";
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../../../_context/AuthProvider";
 import { IconX } from "@tabler/icons-react";
-import { TicketMessage } from "../../../../_types/tickets";
-import { useWebSocket } from "../../../../_context/WebSocketContextProvider";
-import { useTicketsRq } from "../../../../api/routes/tickets/hooks/useTickets";
+import { TicketMessage, Ticket } from "../../../../_types/tickets";
+
+interface TicketProp {
+  data: Ticket
+  isLoading: boolean
+}
+
+interface ConversationProp {
+  data: TicketMessage[]
+  isLoading: boolean
+}
+
+type ConversationTableProps = {
+  ticket: TicketProp
+  conversation: ConversationProp
+  onSuccess?: (res: Message) => void;
+  onCloseTicket?: (res: Message) => void;
+}
 
 export default function ConversationTable({
+  { singleTicket, isTicketLoading },
+  { ticketConversation, isConversationLoading },
   onSuccess,
   onCloseTicket,
-}: {
-  onSuccess?: (res: Answer) => void;
-  onCloseTicket?: (res: Message) => void;
-}) {
+}: ConversationTableProps: ConversationTableProps) {
   const params = useParams();
   const ticketId = Number(params.ticketId);
   const { loggedInUser } = useAuthContext();
 
-  const [loadingConversation, setLoadingConversation] = useState(false);
   const [replyTo, setReplyTo] = useState<TicketMessage | null>(null);
   const [showReplyHighlight, setShowReplyHighlight] = useState(false);
 
@@ -36,13 +337,10 @@ export default function ConversationTable({
   const prevTicketId = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const { getConversationById, getTicketById, setAnswer, sendAnswer, closeTicket  } = useTicketsRq();
-  const { data: ticketConversation, isLoading, refetch: refetchConversation } = getConversationById(ticketId);
-  const { data: singleTicket, refetch: refetchSingleTicket } = getTicketById(ticketId);
 
   const isClosed = singleTicket?.status?.toLowerCase() === "closed";
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
-  const { subscribe } = useWebSocket();
+
 
   const currentUser = loggedInUser?.username; // This should come from your auth context loggedInUser?.username;
   const form = useForm({
@@ -51,28 +349,6 @@ export default function ConversationTable({
       message: singleTicket?.answer || "",
     },
   });
-
-  useEffect(() => {
-    if (
-      prevTicketId.current !== singleTicket?.id &&
-      singleTicket?.id !== undefined
-    ) {
-      form.setValues({ message: singleTicket?.answer || "" });
-      prevTicketId.current = singleTicket.id;
-    }
-  }, [singleTicket?.id]);
-
-  useEffect(() => {
-    const unsubscribe = subscribe(`/user/queue/ticket-messages`, () => {
-      // Only refetch if we're still on the same ticket
-      if (ticketId && !Number.isNaN(ticketId)) {
-        refetchConversation();
-      }
-    });
-
-    // Cleanup function to prevent multiple subscriptions
-    return unsubscribe;
-  }, [ticketId, subscribe, refetchConversation]);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -89,7 +365,6 @@ export default function ConversationTable({
     try {
       const answer: Answer = form.getValues();
       const resAnswerMessage = await setAnswer.mutateAsync({ answer, ticketId });
-      refetchConversation();
 
       let resSendMessage;
 
@@ -102,7 +377,6 @@ export default function ConversationTable({
       if (onSuccess) {
         onSuccess(resSendMessage);
         form.reset();
-        refetchConversation();
       }
     } catch (err) {
       console.log(err);
@@ -112,7 +386,7 @@ export default function ConversationTable({
   const handleCloseTicket = async () => {
     try {
       const res = await closeTicket.mutateAsync({ ticketId });
-      refetchSingleTicket();
+
 
       if (onCloseTicket) {
         onCloseTicket(res);
@@ -133,11 +407,6 @@ export default function ConversationTable({
     setTimeout(() => setReplyTo(null), 180);
   };
 
-  useEffect(() => {
-    if (ticketId && !Number.isNaN(ticketId)) {
-      refetchConversation();
-    }
-  }, [ticketId]);
 
   return (
     <Box style={{ height: "700px", padding: "16px" }}>
@@ -328,3 +597,7 @@ export default function ConversationTable({
     </Box>
   );
 }
+
+
+
+*/
