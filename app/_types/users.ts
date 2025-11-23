@@ -1,14 +1,9 @@
 
 
 
-export type User = {
-    id: number,
-    username: string;
-    email: string;
-    role: string;
-}
 
-export type LoggedInUser = {
+
+export type User = {
     id: number,
     username: string;
     role: string;
