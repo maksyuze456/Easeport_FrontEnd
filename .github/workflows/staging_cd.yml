@@ -59,9 +59,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Create .env file for deploy
+      - name: Create .env.local file for deploy
         run: |
-          cat <<EOF > .env
+          cat <<EOF > .env.local
           NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
           NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
@@ -69,7 +69,7 @@ jobs:
 
       - name: Copy Docker Compose files
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml .env \
+          scp -o StrictHostKeyChecking=no docker-compose.yml .env.local \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/app/
 
       - name: Build & Deploy
