@@ -16,7 +16,7 @@ export function AuthenticationImage() {
     const [IsLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const apiUrl = process.env.NEXT_PUBLIC_URL || '';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -25,7 +25,7 @@ export function AuthenticationImage() {
 
 
         try {
-            const res = await fetch(`${apiUrl}/auth/signin`, {
+            const res = await fetch(`${apiUrl}/api/auth/signin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({username, password}),
