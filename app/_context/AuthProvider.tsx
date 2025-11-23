@@ -26,7 +26,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function useAuthContext() {
   const ctx = useContext(AuthContext);
   if (!ctx) {
-    throw new Error("useAuthContext must be used inside <AuthProvider>");
+    throw new Error();
   }
   return ctx;
 }

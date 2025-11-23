@@ -31,6 +31,7 @@ export function AuthenticationImage() {
                 body: JSON.stringify({username, password}),
                 credentials: 'include'
             });
+            console.log(res);
             if (!res.ok) {
                 throw new Error('Login failed');
             }
