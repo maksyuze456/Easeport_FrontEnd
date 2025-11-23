@@ -3,59 +3,76 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
 import TicketsTable from "../_TicketsTable/TicketsTable";
-import { useTickets } from '../../../_context/TicketProvider';
 import { TicketStatus } from "../../../_types/tickets";
-import { useEffect } from 'react';
-
+import { useTicketsByStatus, useAssignTicket } from "../../../api/routes/tickets/hooks/useTicketQueries";
+import { useWebSocket } from "../../../_context/WebSocketContextProvider";
+import { useEffect } from "react";
+import { Message } from "../../../_types/message";
 
 export default function TicketsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const rawStatus = searchParams.get("status");
-  const validStatuses: TicketStatus[] = ['Open', 'Reviewing', 'Closed'];
-  const { refetch } = useTickets();
-
+  const params = useSearchParams();
+  const { subscribe } = useWebSocket();
+  // derive status from URL
+  const rawStatus = params.get("status");
+  const valid: TicketStatus[] = ["Open", "Reviewing", "Closed"];
 
   const status: TicketStatus =
-    rawStatus && validStatuses.includes(rawStatus as TicketStatus)
+    rawStatus && valid.includes(rawStatus as TicketStatus)
       ? (rawStatus as TicketStatus)
-      : 'Open';
+      : "Open";
 
-  useEffect(() => {
-    refetch(status);
-  }, [status]);
+  const ticketsQuery = useTicketsByStatus(status);
+  const { data, isLoading, refetch } = ticketsQuery;
+  const assignMutation = useAssignTicket();
 
+  const handleAssign = async (ticketId: number) => {
 
-  const handleWhenTicketAssigned = async () => {
-    await refetch(status);
-    router.push("/dashboard/employee/tickets");
+    const res: Message = await assignMutation.mutateAsync(ticketId)
+    console.log(res.message);
+
   };
+  // Web socket subscriptions
+  /*  
+  useEffect(() => {
+    subscribe("/topic/new-ticket", () => refetch());
+    subscribe("/topic/assign", () => refetch());
+  }, []);
+  
+  */
 
 
   return (
     <div style={{ padding: "16px" }}>
       <Group mb="md">
-
         <Button
           variant="default"
-          onClick={() => router.push("/dashboard/employee/tickets?status=Open")}
+          onClick={() =>
+            router.push("/dashboard/employee/tickets?status=Open")
+          }
         >
           Open
         </Button>
+
         <Button
           variant="default"
-          onClick={() => router.push("/dashboard/employee/tickets?status=Closed")}
+          onClick={() =>
+            router.push("/dashboard/employee/tickets?status=Closed")
+          }
         >
           Closed
         </Button>
       </Group>
 
       <Center>
-        {status === 'Open' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned} />
-        )}
-        {status === 'Closed' && (
-          <TicketsTable ticketStatus={status} onUpdate={handleWhenTicketAssigned} />
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <TicketsTable
+            data={data}
+            isLoading={isLoading}
+            onAssign={handleAssign}
+          />
         )}
       </Center>
     </div>
