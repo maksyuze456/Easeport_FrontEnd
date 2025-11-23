@@ -17,6 +17,7 @@ export default function TicketsPage() {
   const rawStatus = params.get("status");
   const valid: TicketStatus[] = ["Open", "Reviewing", "Closed"];
 
+
   const status: TicketStatus =
     rawStatus && valid.includes(rawStatus as TicketStatus)
       ? (rawStatus as TicketStatus)
