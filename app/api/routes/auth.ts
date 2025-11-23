@@ -3,14 +3,12 @@ import { User } from "../../_types/users";
 import { client } from "../client";
 
 
-export async function getUser(): Promise<User | null> {
-  try {
-    const { data } = await client.get("/auth/me");
-    console.log(data);
-    return data as User;
-  } catch (err) {
-    return null; 
-  }
+export async function getUser(): Promise<User> {
+
+  const { data } = await client.get("/auth/me");
+  console.log(data);
+  return <User>(data);
+
 }
 
 export function useAuth() {
