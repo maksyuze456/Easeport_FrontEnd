@@ -5,7 +5,7 @@ import { client } from "../client";
 
 export async function getUser(): Promise<User> {
 
-  const { data } = await client.get("/auth/me");
+  const { data } = await client.get("/api/auth/me");
   console.log(data);
   return <User>(data);
 
