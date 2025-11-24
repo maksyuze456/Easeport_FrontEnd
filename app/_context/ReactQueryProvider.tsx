@@ -17,10 +17,12 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
         },
     }));
 
+    const showDevtools = process.env.NEXT_PUBLIC_SHOW_RQ_DEVTOOLS === "true";
+
     return (
         <QueryClientProvider client={client}>
             {children}
-            <ReactQueryDevtools />
+            {showDevtools && <ReactQueryDevtools initialIsOpen={false} />}
         </QueryClientProvider>
     );
 }
