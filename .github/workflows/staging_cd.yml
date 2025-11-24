@@ -43,7 +43,7 @@ jobs:
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
             NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
-            NEXT_PUBLIC_SHOW_RQ_DEVTOOLS=true
+            NEXT_PUBLIC_SHOW_RQ_DEVTOOLS=${{ secrets.NEXT_PUBLIC_SHOW_RQ_DEVTOOLS }}
 
   deploy:
     name: Deploy on Hetzner VM
