@@ -18,6 +18,7 @@ import { getMyTicketsRq, getTicketsByStatusRq } from '../api/routes/tickets/tick
 import { NotificationType } from '../_types/notifications';
 import { useNotifications } from '../api/routes/notifications/hooks/useNotificationsQueries';
 import { getConversation } from '../api/routes/tickets/ticketConversation';
+import { useDashboardWsSubscriptions } from './useDashboardWsSubscriptions';
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -48,72 +49,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }
   }, [authLoading, loggedInUser, router]);
 
+  useDashboardWsSubscriptions(loggedInUser?.id);
   // WebSocket subscriptions
   useEffect(() => {
     if (!loggedInUser) {
       return;
     }
 
-    const unsubNew = subscribe("/topic/new-ticket", () => {
-      queryClient.invalidateQueries({ queryKey: ["tickets", "Open"] });
-      queryClient.fetchQuery({
-        queryKey: ["tickets", "Open"],
-        queryFn: () => getTicketsByStatusRq("Open"),
-      });
-    });
-
-    const unsubAssign = subscribe("/topic/assign", () => {
-      queryClient.invalidateQueries({ queryKey: ["tickets", "Open"] });
-      queryClient.fetchQuery({
-        queryKey: ["tickets", "Open"],
-        queryFn: () => getTicketsByStatusRq("Open"),
-      });
-    });
-
-    const unsubPersonalAssign = subscribe("/user/queue/assign", () => {
-      queryClient.invalidateQueries({ queryKey: ["myTickets", "Reviewing"] });
-      queryClient.fetchQuery({
-        queryKey: ["myTickets", "Reviewing"],
-        queryFn: () => getMyTicketsRq("Reviewing"),
-      });
-    });
-
-    const unsubNotifications = subscribe("/user/queue/notifications", (msg) => {
-      const message: Message = JSON.parse(msg);
-      const notificationType: NotificationType = message.message as NotificationType;
-      console.log(notificationType);
-
-      queryClient.invalidateQueries({ queryKey: ["notifications", loggedInUser.id] });
-      refetchNotifications();
-    });
-
-    const unsubMessages = subscribe("/user/queue/ticket-messages", (msg) => {
-      const message: Message = JSON.parse(msg);
-      const ticketId: number = Number.parseInt(message.message);
-      console.log("Message in ticket: " + ticketId);
-
-      queryClient.invalidateQueries({ queryKey: ["conversation", ticketId] });
-      queryClient.fetchQuery({
-        queryKey: ["conversation", ticketId],
-        queryFn: () => getConversation(ticketId),
-      });
-    });
-
-    return () => {
-      unsubNew();
-      unsubAssign();
-      unsubPersonalAssign();
-      unsubNotifications();
-      unsubMessages();
-    };
+    
   }, [loggedInUser, subscribe, queryClient, refetchNotifications]);
 
-  // Disconnect websocket when user logs out
-  useEffect(() => {
-    if (!loggedInUser) {
-      disconnect();
-    }
-  }, [loggedInUser, disconnect]);
 
   // 2. NOW YOU CAN SAFELY DO CONDITIONAL RETURNS
   if (authLoading) {

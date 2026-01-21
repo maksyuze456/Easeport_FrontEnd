@@ -1,9 +1,9 @@
 import { Client, IMessage } from "@stomp/stompjs"
 import SockJS from "sockjs-client"
 
-type MessageHandler = (topic: string, payload: string) => void
+export type MessageHandler = (topic: string, payload: string) => void
 
-interface WsTransport {
+export interface WsTransport {
   connect(): void
   disconnect(): void
   subscribe(topic: string): void
