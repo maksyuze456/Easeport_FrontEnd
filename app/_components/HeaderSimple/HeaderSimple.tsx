@@ -5,12 +5,19 @@ import { Burger, Container, Group, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import classes from './HeaderSimple.module.css';
+import NotificationBell from '../NotificationBell/NotificationBell';
+import { Notification } from '../../_types/notifications';
 
 const links = [
   { link: '/dashboard', label: 'Features' },
 ];
 
-export function HeaderSimple() {
+type HeaderSimpleProps = {
+  notifications?: Notification[];
+  notificationsLoading?: boolean;
+};
+
+export function HeaderSimple({ notifications, notificationsLoading }: HeaderSimpleProps) {
   const [opened, { toggle }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
   const router = useRouter();
@@ -30,7 +37,6 @@ export function HeaderSimple() {
       {link.label}
     </a>
   ));
-
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
@@ -42,7 +48,8 @@ export function HeaderSimple() {
             color: '#228BE6'
           }}>Port</span>
         </Flex>
-        <Group gap={5} visibleFrom="xs">
+        <Group gap="md" align="center" visibleFrom="xs">
+          <NotificationBell notifications={notifications} loading={notificationsLoading} />
           {items}
         </Group>
 

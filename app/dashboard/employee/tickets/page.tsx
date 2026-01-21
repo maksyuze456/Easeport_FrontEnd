@@ -29,8 +29,8 @@ export default function TicketsPage() {
 
   const handleAssign = async (ticketId: number) => {
 
-    const res: Message = await assignMutation.mutateAsync(ticketId)
-    console.log(res.message);
+    const res = await assignMutation.mutateAsync(ticketId)
+    console.log(res);
 
   };
   // Web socket subscriptions
