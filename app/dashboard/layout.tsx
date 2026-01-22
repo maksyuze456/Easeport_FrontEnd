@@ -56,7 +56,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    
+
   }, [loggedInUser, subscribe, queryClient, refetchNotifications]);
 
 

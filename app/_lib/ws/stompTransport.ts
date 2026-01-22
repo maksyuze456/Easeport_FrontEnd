@@ -20,7 +20,7 @@ export class StompTransport implements WsTransport {
       webSocketFactory: () => new SockJS(url),
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      debug: () => {},
+      debug: (msg) => console.log("[STOMP]", msg),
     })
 
     this.client.onConnect = () => {
