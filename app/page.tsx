@@ -9,7 +9,6 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (authLoading) return;
 
     if (!loggedInUser) {
       router.push("/login");

@@ -10,9 +10,14 @@ import {
   Title,
 } from '@mantine/core';
 import classes from './AuthenticationImage.module.css';
-import { useRouter } from 'next/navigation';
-export function AuthenticationImage() {
-    const router = useRouter();
+
+type AuthenticationProps = {
+
+  onSuccess: () => Promise<void>;
+
+}
+
+export function AuthenticationImage({ onSuccess }: AuthenticationProps) {
     const [IsLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -36,7 +41,7 @@ export function AuthenticationImage() {
                 throw new Error('Login failed');
             }
             if(res.ok) {
-                router.push('/dashboard');
+                onSuccess();
             };
         } catch (e) {
             console.log(e);

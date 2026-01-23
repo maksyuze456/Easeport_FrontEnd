@@ -14,9 +14,11 @@ import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
 import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
 import { useWebSocket, WebSocketContextProvider } from '../_context/WebSocketContextProvider';
 import { useQueryClient } from '@tanstack/react-query';
-import { TicketStatus } from '../_types/tickets';
 import { getMyTicketsRq, getTicketsByStatusRq } from '../api/routes/tickets/tickets';
+import { NotificationType } from '../_types/notifications';
+import { useNotifications } from '../api/routes/notifications/hooks/useNotificationsQueries';
 import { getConversation } from '../api/routes/tickets/ticketConversation';
+import { useDashboardWsSubscriptions } from './useDashboardWsSubscriptions';
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -34,64 +36,29 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
   const [responseMessage, setResponseMessage] = useState<Message | null>(null);
   const [showNotification, setShowNotification] = useState(false);
+  const { data: notifications, isLoading: notificationsLoading, refetch: refetchNotifications } = useNotifications(loggedInUser?.id);
+
 
   const router = useRouter();
   const queryClient = useQueryClient();
   const { subscribe, disconnect } = useWebSocket();
-  
+
+  useEffect(() => {
+    if (!authLoading && !loggedInUser) {
+      router.replace('/login');
+    }
+  }, [authLoading, loggedInUser, router]);
+
+  useDashboardWsSubscriptions(loggedInUser?.id);
   // WebSocket subscriptions
   useEffect(() => {
-    const unsubNew = subscribe("/topic/new-ticket", () => {
-      queryClient.invalidateQueries({ queryKey: ["tickets", "Open"] });
-      queryClient.fetchQuery({
-        queryKey: ["tickets", "Open"],
-        queryFn: () => getTicketsByStatusRq("Open"),
-      });
-    });
-
-    const unsubAssign = subscribe("/topic/assign", () => {
-      queryClient.invalidateQueries({ queryKey: ["tickets", "Open"] });
-      queryClient.fetchQuery({
-        queryKey: ["tickets", "Open"],
-        queryFn: () => getTicketsByStatusRq("Open"),
-      });
-    });
-
-    const unsubPersonalAssign = subscribe("/user/queue/assign", () => {
-      queryClient.invalidateQueries({ queryKey: ["myTickets", "Reviewing"] });
-      queryClient.fetchQuery({
-        queryKey: ["myTickets", "Reviewing"],
-        queryFn: () => getMyTicketsRq("Reviewing"),
-      });
-    });
-
-    const unsubMessages = subscribe("/user/queue/ticket-messages", (msg) => {
-      const message: Message = JSON.parse(msg);
-      const ticketId: number = parseInt(message.message);
-
-      queryClient.invalidateQueries({ queryKey: ["ticket", ticketId] });
-      queryClient.invalidateQueries({ queryKey: ["conversation", ticketId] });
-      queryClient.fetchQuery({
-        queryKey: ["conversation", ticketId],
-        queryFn: () => getConversation(ticketId),
-      });
-      
-    });
-
-    return () => {
-      unsubNew();
-      unsubAssign();
-      unsubPersonalAssign();
-      unsubMessages();
-    };
-  }, [subscribe, queryClient]);
-
-  // Disconnect websocket when user logs out
-  useEffect(() => {
     if (!loggedInUser) {
-      disconnect();
+      return;
     }
-  }, [loggedInUser, disconnect]);
+
+
+  }, [loggedInUser, subscribe, queryClient, refetchNotifications]);
+
 
   // 2. NOW YOU CAN SAFELY DO CONDITIONAL RETURNS
   if (authLoading) {
@@ -103,8 +70,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   }
 
   if (!loggedInUser) {
-    router.push("/login");
-    return;
+    return null;
   }
 
   // 3. NORMAL RENDER
@@ -120,7 +86,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       header={{ height: 60 }}
     >
       <AppShell.Header>
-        <HeaderSimple />
+        <HeaderSimple notifications={notifications} notificationsLoading={notificationsLoading} />
       </AppShell.Header>
 
       <AppShell.Navbar>

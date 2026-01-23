@@ -21,5 +21,9 @@ export function useAuth() {
     queryKey: ["auth"],
     queryFn: getUser,
     retry: false,
+    staleTime: 60*1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always'
+    
   });
 }
