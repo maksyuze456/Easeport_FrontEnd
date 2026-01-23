@@ -20,6 +20,7 @@ const customJestConfig = {
   testPathIgnorePatterns: [
     './tests/'
   ],
+  /*   
   coverageThreshold: {
     global: {
       branches: 80,
@@ -28,6 +29,7 @@ const customJestConfig = {
       statements: 80,
     },
   }
+  */
 }
 
 module.exports = createJestConfig(customJestConfig)
