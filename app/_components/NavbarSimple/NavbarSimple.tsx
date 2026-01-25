@@ -10,21 +10,20 @@ import {
 import { Code, Flex, Group } from '@mantine/core';
 import classes from './NavbarSimple.module.css';
 import { useRouter, usePathname } from 'next/navigation';
-import { useWebSocket } from '../../_context/WebSocketContextProvider';
 
 const data = [
   { link: '/dashboard/employee/tickets', label: 'Tickets', icon: IconTicket },
   { link: '/dashboard/employee/my_tickets', label: 'My Tickets', icon: IconBriefcase2 },
 ];
 
-export function NavbarSimple() {
+export function NavbarSimple({ onLogout }: { onLogout: () => void }) {
   const [active, setActive] = useState('Billing');
   const router = useRouter();
   const pathname = usePathname();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-  const { disconnect } = useWebSocket();
 
   const handleLogout = async (e: React.FormEvent) => {
+    onLogout();
     e.preventDefault();
     try {
       const res = await fetch(`${apiUrl}/api/auth/logout`, {
@@ -32,7 +31,6 @@ export function NavbarSimple() {
         credentials: 'include'
       });
       if (!res.ok) throw new Error("Error on logout");
-      await disconnect();
       router.push("/login");
     } catch (err) {
       console.log(err);

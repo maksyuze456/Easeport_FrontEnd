@@ -1,7 +1,7 @@
 'use client';
 
 import { AppShell, Center, Loader, Notification } from '@mantine/core';
-import { AuthProvider, useAuthContext } from "../_context/AuthProvider";
+import { useAuthContext } from "../_context/AuthProvider";
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,36 +12,24 @@ import { Message } from '../_types/message';
 import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
 import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
 import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
-import { useWebSocket, WebSocketContextProvider } from '../_context/WebSocketContextProvider';
-import { useQueryClient } from '@tanstack/react-query';
-import { getMyTicketsRq, getTicketsByStatusRq } from '../api/routes/tickets/tickets';
-import { NotificationType } from '../_types/notifications';
 import { useNotifications } from '../api/routes/notifications/hooks/useNotificationsQueries';
-import { getConversation } from '../api/routes/tickets/ticketConversation';
-import { useDashboardWsSubscriptions } from './useDashboardWsSubscriptions';
+import { useDashboardWsSubscriptions } from '../../lib/ws/useDashboardSubscriptions';
+import { useWebSocket } from '../../context/WebSocketContext';
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <WebSocketContextProvider>
-      <DashboardContent>{children}</DashboardContent>
-    </WebSocketContextProvider>
-
-
+    <DashboardContent>{children}</DashboardContent>
   );
 }
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
-  // 1. ALL HOOKS MUST RUN FIRST
+  const { disconnect } = useWebSocket();
   const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
   const [responseMessage, setResponseMessage] = useState<Message | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const { data: notifications, isLoading: notificationsLoading, refetch: refetchNotifications } = useNotifications(loggedInUser?.id);
-
-
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { subscribe, disconnect } = useWebSocket();
 
   useEffect(() => {
     if (!authLoading && !loggedInUser) {
@@ -49,18 +37,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }
   }, [authLoading, loggedInUser, router]);
 
-  useDashboardWsSubscriptions(loggedInUser?.id);
-  // WebSocket subscriptions
-  useEffect(() => {
-    if (!loggedInUser) {
-      return;
-    }
+  const onLogout = () => {
+    disconnect()
+  }
 
+  useDashboardWsSubscriptions(loggedInUser?.id)
 
-  }, [loggedInUser, subscribe, queryClient, refetchNotifications]);
-
-
-  // 2. NOW YOU CAN SAFELY DO CONDITIONAL RETURNS
   if (authLoading) {
     return (
       <Center h="100vh">
@@ -73,8 +55,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  // 3. NORMAL RENDER
   return (
+
     <AppShell
       withBorder
       padding="md"
@@ -91,7 +73,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
       <AppShell.Navbar>
         {loggedInUser.role === "ROLE_ADMIN" && <NavbarSegmented />}
-        {loggedInUser.role === "ROLE_USER" && <NavbarSimple />}
+        {loggedInUser.role === "ROLE_USER" && <NavbarSimple onLogout={onLogout} />}
       </AppShell.Navbar>
 
       <AppShell.Main>

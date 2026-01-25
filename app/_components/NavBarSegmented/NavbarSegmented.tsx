@@ -9,7 +9,6 @@ import {
 import { SegmentedControl, Flex, Code } from '@mantine/core';
 import classes from './NavbarSegmented.module.css';
 import { useRouter, usePathname } from 'next/navigation';
-import { useWebSocket } from '../../_context/WebSocketContextProvider';
 const tabs = {
   account: [
     { link: '', label: 'Settings', icon: IconSettings },
@@ -26,7 +25,6 @@ export function NavbarSegmented() {
   const pathname = usePathname();
   const [section, setSection] = useState<'account' | 'general'>('account');
   const [active, setActive] = useState('Billing');
-  const { disconnect } = useWebSocket();
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +34,6 @@ export function NavbarSegmented() {
         credentials: 'include'
       });
       if (!res.ok) throw new Error("Error on logout");
-      await disconnect();
       router.push("/login");
     } catch (err) {
       console.log(err);

@@ -28,6 +28,7 @@ export function useMyTickets(status: TicketStatus) {
   return useQuery({
     queryKey: ["myTickets", status],
     queryFn: () => getMyTicketsRq(status),
+    staleTime: 60 * 1000
   });
 }
 

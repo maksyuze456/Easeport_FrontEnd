@@ -7,6 +7,8 @@ import { BadgeCard } from '../_components/BadgeCard/BadgeCard';
 
 export default function DashboardPage() {
   const isMobile = useMediaQuery('(max-width: 1000px)');
+
+
   return (
     <>
       <Text

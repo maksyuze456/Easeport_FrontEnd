@@ -14,7 +14,6 @@ import { createPortal } from "react-dom";
 import { useParams, useRouter } from "next/navigation";
 
 import { useAuthContext } from "../../../../_context/AuthProvider";
-import { useWebSocket } from "../../../../_context/WebSocketContextProvider";
 
 import ViewTicket from "./ViewTicket";
 import ConversationTable from "./ViewConversation";
@@ -28,12 +27,12 @@ import {
 } from "../../../../api/routes/tickets/hooks/useTicketQueries";
 
 import { Answer, Message } from "../../../../_types/message";
+import { useWebSocket } from "../../../../../context/WebSocketContext";
 
 export default function ViewTicketPage() {
   const params = useParams();
   const ticketId = Number(params.ticketId);
   const router = useRouter();
-  const { subscribe } = useWebSocket();
   const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
 
   const [responseMessage, setResponseMessage] = useState<Message | null>(null);
@@ -57,15 +56,6 @@ export default function ViewTicketPage() {
   const sendAnswerMutation = useSendAnswer();
   const closeTicketMutation = useCloseTicket();
 
-  // WebSocket refresh
-  useEffect(() => {
-    const unsub = subscribe(`/user/queue/ticket-messages`, () => {
-      if (!Number.isNaN(ticketId)) {
-        refetchConversation();
-      }
-    });
-    return unsub;
-  }, [ticketId, subscribe, refetchConversation]);
 
   // Unified notification
   const pushNotification = (message: Message) => {

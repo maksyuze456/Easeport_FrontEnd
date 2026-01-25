@@ -8,6 +8,7 @@ import {
 import { theme } from "../theme";
 import { AuthProvider } from "./_context/AuthProvider";
 import { ReactQueryProvider } from "./_context/ReactQueryProvider";
+import Providers from "./providers";
 
 export const metadata = {
   title: "Easeport",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: any }) {
   return (
     <ReactQueryProvider>
       <AuthProvider>
+        <Providers>
         <html lang="en" {...mantineHtmlProps}>
           <head>
             <ColorSchemeScript />
@@ -31,6 +33,7 @@ export default function RootLayout({ children }: { children: any }) {
             <MantineProvider theme={theme}>{children}</MantineProvider>
           </body>
         </html>
+        </Providers>
       </AuthProvider>
     </ReactQueryProvider>
   );
