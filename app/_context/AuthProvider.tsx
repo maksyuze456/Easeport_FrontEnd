@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import { useAuth } from "../api/routes/auth"; // your React Query hook
 import { UseQueryResult } from "@tanstack/react-query";
 import { User } from "../_types/users";
+import { useAuth } from "../../features/auth/queries/useUser";
 
 type AuthContextType = UseQueryResult<User | null, unknown>;
 
@@ -14,7 +14,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const authQuery = useAuth(); // React Query handles user
+  const authQuery = useAuth() // React Query handles user
 
   return (
     <AuthContext.Provider value={authQuery}>

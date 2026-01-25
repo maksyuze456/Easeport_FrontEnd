@@ -15,6 +15,7 @@ import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented'
 import { useNotifications } from '../api/routes/notifications/hooks/useNotificationsQueries';
 import { useDashboardWsSubscriptions } from '../../lib/ws/useDashboardSubscriptions';
 import { useWebSocket } from '../../context/WebSocketContext';
+import { logout } from '../../features/auth/api/auth';
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -37,8 +38,10 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }
   }, [authLoading, loggedInUser, router]);
 
-  const onLogout = () => {
+  const onLogout = async () => {
+    let res = await logout();
     disconnect()
+    router.push("/login");
   }
 
   useDashboardWsSubscriptions(loggedInUser?.id)

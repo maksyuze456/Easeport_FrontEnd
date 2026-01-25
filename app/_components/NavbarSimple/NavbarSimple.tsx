@@ -20,21 +20,10 @@ export function NavbarSimple({ onLogout }: { onLogout: () => void }) {
   const [active, setActive] = useState('Billing');
   const router = useRouter();
   const pathname = usePathname();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   const handleLogout = async (e: React.FormEvent) => {
-    onLogout();
     e.preventDefault();
-    try {
-      const res = await fetch(`${apiUrl}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-      if (!res.ok) throw new Error("Error on logout");
-      router.push("/login");
-    } catch (err) {
-      console.log(err);
-    }
+    onLogout();
   };
   const links = data.map((item) => {
     const isAstive = pathname === item.link;
