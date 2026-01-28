@@ -8,14 +8,11 @@ import { useEffect, useState } from 'react';
 import { IconCheck } from '@tabler/icons-react';
 
 import { createPortal } from "react-dom";
-import { Message } from '../_types/message';
-import { HeaderSimple } from '../_components/HeaderSimple/HeaderSimple';
-import { NavbarSimple } from '../_components/NavbarSimple/NavbarSimple';
-import { NavbarSegmented } from '../_components/NavBarSegmented/NavbarSegmented';
-import { useNotifications } from '../api/routes/notifications/hooks/useNotificationsQueries';
+import { HeaderSimple, NavbarSimple, NavbarSegmented } from '../../shared/components/layout';
+import { useNotifications } from '../../features/notifications';
+import { logout } from '../../features/auth';
 import { useDashboardWsSubscriptions } from '../../lib/ws/useDashboardSubscriptions';
 import { useWebSocket } from '../../context/WebSocketContext';
-import { logout } from '../../features/auth/api/auth';
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { disconnect } = useWebSocket();
   const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
-  const [responseMessage, setResponseMessage] = useState<Message | null>(null);
+  const [responseMessage, setResponseMessage] = useState<{ message: string } | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const { data: notifications, isLoading: notificationsLoading, refetch: refetchNotifications } = useNotifications(loggedInUser?.id);
   const router = useRouter();

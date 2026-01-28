@@ -2,8 +2,7 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { UseQueryResult } from "@tanstack/react-query";
-import { User } from "../_types/users";
-import { useAuth } from "../../features/auth/queries/useUser";
+import { User, useAuth } from "../../features/auth";
 
 type AuthContextType = UseQueryResult<User | null, unknown>;
 

@@ -1,0 +1,31 @@
+{
+  "category": "Uncategorized",
+  "description": "Change all structure of the app into modular structure, feature based. just like features/auth, everything related to a functionality should be in that folder, hooks, whatever",
+  "title": "Refactor app to modular feature-based architecture",
+  "images": [],
+  "imagePaths": [],
+  "textFilePaths": [],
+  "skipTests": true,
+  "model": "claude-opus",
+  "thinkingLevel": "none",
+  "reasoningEffort": "none",
+  "branchName": "fix/modularStructure",
+  "priority": 2,
+  "planningMode": "skip",
+  "requirePlanApproval": false,
+  "dependencies": [],
+  "workMode": "current",
+  "titleGenerating": false,
+  "status": "waiting_approval",
+  "id": "feature-1769621527112-hsfujarve",
+  "descriptionHistory": [
+    {
+      "description": "Change all structure of the app into modular structure, feature based. just like features/auth, everything related to a functionality should be in that folder, hooks, whatever",
+      "timestamp": "2026-01-28T17:32:07.235Z",
+      "source": "initial"
+    }
+  ],
+  "startedAt": "2026-01-28T17:32:20.286Z",
+  "updatedAt": "2026-01-28T17:53:22.242Z",
+  "justFinishedAt": "2026-01-28T17:53:22.242Z"
+}

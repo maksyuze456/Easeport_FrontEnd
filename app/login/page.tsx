@@ -2,8 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../_context/AuthProvider";
 import { wsClient } from "../../lib/ws/wsClient";
-import { signIn } from "../../features/auth/api/auth";
-import { AuthenticationImage } from "../../features/auth/components/AuthenticationImage/AuthenticationImage";
+import { signIn, AuthenticationImage } from "../../features/auth";
 
 
 export default function LoginPage() {

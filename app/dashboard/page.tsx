@@ -2,7 +2,7 @@
 
 import { Flex, Code, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { BadgeCard } from '../_components/BadgeCard/BadgeCard';
+import { BadgeCard } from '../../shared/components/ui';
 
 
 export default function DashboardPage() {

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "notifications": [
+    {
+      "id": "1c2dd73d-c6dc-4f8f-bacb-e946f66ece3a",
+      "type": "feature_waiting_approval",
+      "title": "Feature Ready for Review",
+      "message": "\"feature-1769620832767-ywax5k7h4\" is ready for your review and approval.",
+      "createdAt": "2026-01-28T17:29:33.360Z",
+      "read": false,
+      "dismissed": false,
+      "featureId": "feature-1769620832767-ywax5k7h4",
+      "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend"
+    },
+    {
+      "id": "78720906-7f7c-49a7-8b40-6b05a90684a8",
+      "type": "feature_waiting_approval",
+      "title": "Feature Ready for Review",
+      "message": "\"feature-1769621527112-hsfujarve\" is ready for your review and approval.",
+      "createdAt": "2026-01-28T17:53:22.251Z",
+      "read": false,
+      "dismissed": false,
+      "featureId": "feature-1769621527112-hsfujarve",
+      "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend"
+    }
+  ]
+}

@@ -2,9 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
-import TicketsTable from "../_TicketsTable/TicketsTable";
-import { TicketStatus } from "../../../_types/tickets";
-import { useTicketsByStatus, useAssignTicket } from "../../../api/routes/tickets/hooks/useTicketQueries";
+import { TicketsTable, TicketStatus, useTicketsByStatus, useAssignTicket } from "../../../../features/tickets";
 
 
 export default function TicketsPage() {

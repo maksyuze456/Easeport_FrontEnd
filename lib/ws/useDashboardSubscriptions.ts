@@ -3,11 +3,9 @@
 import { useEffect } from "react"
 import { useWebSocket } from "../../context/WebSocketContext"
 import { useQueryClient } from "@tanstack/react-query"
-import { Message } from "../../app/_types/message"
-import { getConversation } from "../../app/api/routes/tickets/ticketConversation"
 
 export function useDashboardWsSubscriptions(userId?: number) {
-    const { subscribe, disconnect } = useWebSocket()
+    const { subscribe } = useWebSocket()
     const queryClient = useQueryClient()
 
     useEffect(() => {
@@ -32,7 +30,7 @@ export function useDashboardWsSubscriptions(userId?: number) {
                 })
             }),
             subscribe("/user/queue/ticket-messages", (msg) => {
-                const message: Message = JSON.parse(msg)
+                const message: { message: string } = JSON.parse(msg)
                 const ticketId = Number.parseInt(message.message)
 
                 queryClient.invalidateQueries({

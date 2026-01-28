@@ -1,0 +1,11 @@
+{
+  "id": "evt-1769621373376-90d67b09",
+  "trigger": "feature_success",
+  "timestamp": "2026-01-28T17:29:33.376Z",
+  "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend",
+  "projectName": "easeportFrontend",
+  "featureId": "feature-1769620832767-ywax5k7h4",
+  "featureName": "",
+  "error": "Feature completed in 540s",
+  "passes": true
+}

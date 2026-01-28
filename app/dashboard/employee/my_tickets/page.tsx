@@ -2,12 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Group, Center, Button } from "@mantine/core";
-import TicketsTable from "../_TicketsTable/TicketsTable";
-import { TicketStatus } from "../../../_types/tickets";
-import {
-  IconPencil
-} from '@tabler/icons-react';
-import { useMyTickets } from "../../../api/routes/tickets/hooks/useTicketQueries";
+import { IconPencil } from '@tabler/icons-react';
+import { TicketsTable, TicketStatus, useMyTickets } from "../../../../features/tickets";
 
 export default function MyTicketsPage() {
   const router = useRouter();

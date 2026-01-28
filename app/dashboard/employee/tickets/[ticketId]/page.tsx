@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Center,
   Notification,
@@ -14,20 +14,15 @@ import { createPortal } from "react-dom";
 import { useParams, useRouter } from "next/navigation";
 
 import { useAuthContext } from "../../../../_context/AuthProvider";
-
-import ViewTicket from "./ViewTicket";
-import ConversationTable from "./ViewConversation";
-
 import {
+  ViewTicket,
+  ViewConversation,
   useTicketById,
   useConversationById,
   useCloseTicket,
   useSetAnswer,
   useSendAnswer,
-} from "../../../../api/routes/tickets/hooks/useTicketQueries";
-
-import { Answer, Message } from "../../../../_types/message";
-import { useWebSocket } from "../../../../../context/WebSocketContext";
+} from "../../../../../features/tickets";
 
 export default function ViewTicketPage() {
   const params = useParams();
@@ -35,7 +30,7 @@ export default function ViewTicketPage() {
   const router = useRouter();
   const { data: loggedInUser, isLoading: authLoading } = useAuthContext();
 
-  const [responseMessage, setResponseMessage] = useState<Message | null>(null);
+  const [responseMessage, setResponseMessage] = useState<{ message: string } | null>(null);
   const [showNotification, setShowNotification] = useState(false);
 
   // Queries
@@ -58,7 +53,7 @@ export default function ViewTicketPage() {
 
 
   // Unified notification
-  const pushNotification = (message: Message) => {
+  const pushNotification = (message: { message: string }) => {
     setResponseMessage(message);
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
@@ -149,9 +144,10 @@ export default function ViewTicketPage() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <ConversationTable
+          <ViewConversation
             ticket={ticket}
             conversation={conversation}
+            currentUsername={loggedInUser?.username || ""}
             isTicketLoading={isTicketLoading}
             isConversationLoading={isConversationLoading}
             onSendAnswer={handleSendAnswer}

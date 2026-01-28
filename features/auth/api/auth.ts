@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { User } from "../../../app/_types/users";
+import { User } from "../types";
 import { client } from "../../../lib/api/axiosClient";
 
 export async function getUser(): Promise<User> {

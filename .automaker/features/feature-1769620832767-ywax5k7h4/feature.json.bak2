@@ -1,0 +1,30 @@
+{
+  "category": "Uncategorized",
+  "description": "Create app spec, and get context of the app, its a front end app ticket management tool with spring boot java backend",
+  "title": "Create app specification and gather context",
+  "images": [],
+  "imagePaths": [],
+  "textFilePaths": [],
+  "skipTests": true,
+  "model": "claude-opus",
+  "thinkingLevel": "none",
+  "reasoningEffort": "none",
+  "branchName": "fix/modularStructure",
+  "priority": 2,
+  "planningMode": "skip",
+  "requirePlanApproval": false,
+  "dependencies": [],
+  "workMode": "current",
+  "titleGenerating": false,
+  "status": "in_progress",
+  "id": "feature-1769620832767-ywax5k7h4",
+  "descriptionHistory": [
+    {
+      "description": "Create app spec, and get context of the app, its a front end app ticket management tool with spring boot java backend",
+      "timestamp": "2026-01-28T17:20:32.900Z",
+      "source": "initial"
+    }
+  ],
+  "startedAt": "2026-01-28T17:20:33.007Z",
+  "updatedAt": "2026-01-28T17:20:33.273Z"
+}
