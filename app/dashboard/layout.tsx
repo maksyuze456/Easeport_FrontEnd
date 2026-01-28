@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell, Center, Loader, Notification } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useAuthContext } from "../_context/AuthProvider";
 
 import { useRouter } from 'next/navigation';
@@ -27,6 +28,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   const [responseMessage, setResponseMessage] = useState<{ message: string } | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const { data: notifications, isLoading: notificationsLoading, refetch: refetchNotifications } = useNotifications(loggedInUser?.id);
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure();
   const router = useRouter();
 
   useEffect(() => {
@@ -63,17 +65,22 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       navbar={{
         width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: true },
+        collapsed: { mobile: !mobileOpened },
       }}
       header={{ height: 60 }}
     >
       <AppShell.Header>
-        <HeaderSimple notifications={notifications} notificationsLoading={notificationsLoading} />
+        <HeaderSimple
+          notifications={notifications}
+          notificationsLoading={notificationsLoading}
+          mobileOpened={mobileOpened}
+          toggleMobile={toggleMobile}
+        />
       </AppShell.Header>
 
       <AppShell.Navbar>
-        {loggedInUser.role === "ROLE_ADMIN" && <NavbarSegmented />}
-        {loggedInUser.role === "ROLE_USER" && <NavbarSimple onLogout={onLogout} />}
+        {loggedInUser.role === "ROLE_ADMIN" && <NavbarSegmented onLogout={onLogout} closeMobile={closeMobile} />}
+        {loggedInUser.role === "ROLE_USER" && <NavbarSimple onLogout={onLogout} closeMobile={closeMobile} />}
       </AppShell.Navbar>
 
       <AppShell.Main>

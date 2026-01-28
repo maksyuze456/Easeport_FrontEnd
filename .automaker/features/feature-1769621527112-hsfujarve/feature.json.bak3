@@ -16,7 +16,7 @@
   "dependencies": [],
   "workMode": "current",
   "titleGenerating": false,
-  "status": "backlog",
+  "status": "in_progress",
   "id": "feature-1769621527112-hsfujarve",
   "descriptionHistory": [
     {
@@ -24,5 +24,7 @@
       "timestamp": "2026-01-28T17:32:07.235Z",
       "source": "initial"
     }
-  ]
+  ],
+  "startedAt": "2026-01-28T17:32:20.286Z",
+  "updatedAt": "2026-01-28T17:32:20.562Z"
 }

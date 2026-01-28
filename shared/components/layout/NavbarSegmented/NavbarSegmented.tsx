@@ -18,9 +18,10 @@ const tabs = {
 
 type NavbarSegmentedProps = {
   onLogout?: () => void;
+  closeMobile?: () => void;
 };
 
-export function NavbarSegmented({ onLogout }: NavbarSegmentedProps) {
+export function NavbarSegmented({ onLogout, closeMobile }: NavbarSegmentedProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [section, setSection] = useState<'account' | 'general'>('account');
@@ -31,6 +32,7 @@ export function NavbarSegmented({ onLogout }: NavbarSegmentedProps) {
     if (onLogout) {
       onLogout();
     }
+    closeMobile?.();
   };
 
   const links = tabs[section].map((item) => {
@@ -46,6 +48,7 @@ export function NavbarSegmented({ onLogout }: NavbarSegmentedProps) {
           event.preventDefault();
           if (item.link) router.push(item.link);
           setActive(item.label);
+          closeMobile?.();
         }}
       >
         <item.icon className={classes.linkIcon} stroke={1.5} />

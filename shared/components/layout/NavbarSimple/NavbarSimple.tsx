@@ -16,7 +16,7 @@ const data = [
   { link: '/dashboard/employee/my_tickets', label: 'My Tickets', icon: IconBriefcase2 },
 ];
 
-export function NavbarSimple({ onLogout }: { onLogout: () => void }) {
+export function NavbarSimple({ onLogout, closeMobile }: { onLogout: () => void; closeMobile?: () => void }) {
   const [active, setActive] = useState('Billing');
   const router = useRouter();
   const pathname = usePathname();
@@ -24,6 +24,7 @@ export function NavbarSimple({ onLogout }: { onLogout: () => void }) {
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     onLogout();
+    closeMobile?.();
   };
 
   const links = data.map((item) => {
@@ -38,6 +39,7 @@ export function NavbarSimple({ onLogout }: { onLogout: () => void }) {
           event.preventDefault();
           if (item.link) router.push(item.link);
           setActive(item.label);
+          closeMobile?.();
         }}
       >
         <item.icon className={classes.linkIcon} stroke={1.5} />

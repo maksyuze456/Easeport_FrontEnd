@@ -2,6 +2,110 @@
   "version": 1,
   "events": [
     {
+      "id": "evt-1769636953774-36dff133",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T21:49:13.774Z",
+      "featureName": "Implement responsive mobile tickets table with minimalist design",
+      "featureId": "feature-1769636625211-zj0s4c1w2"
+    },
+    {
+      "id": "evt-1769636625454-208b3354",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T21:43:45.454Z",
+      "featureId": "feature-1769636625211-zj0s4c1w2"
+    },
+    {
+      "id": "evt-1769636142878-ecc7e3a6",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T21:35:42.878Z",
+      "featureName": "",
+      "featureId": "feature-1769635593836-awpyfc8cu"
+    },
+    {
+      "id": "evt-1769635593980-b9687af6",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T21:26:33.980Z",
+      "featureId": "feature-1769635593836-awpyfc8cu"
+    },
+    {
+      "id": "evt-1769634949316-5f54269b",
+      "trigger": "feature_error",
+      "timestamp": "2026-01-28T21:15:49.316Z",
+      "featureName": "Add responsive hamburger menu for mobile screens",
+      "featureId": "feature-1769634580227-5plnsod5w"
+    },
+    {
+      "id": "evt-1769634580370-0a1b760d",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T21:09:40.371Z",
+      "featureId": "feature-1769634580227-5plnsod5w"
+    },
+    {
+      "id": "evt-1769634385449-bdf4f077",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T21:06:25.449Z",
+      "featureName": "Implement mobile-responsive navigation and tickets page",
+      "featureId": "feature-1769632837999-s1bne2tij"
+    },
+    {
+      "id": "evt-1769634240224-70620824",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T21:04:00.224Z",
+      "featureId": "feature-1769634240019-75oak317h"
+    },
+    {
+      "id": "evt-1769633187703-16242226",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T20:46:27.703Z",
+      "featureId": "feature-1769633187561-epj57zve4"
+    },
+    {
+      "id": "evt-1769633010809-e3777e70",
+      "trigger": "feature_error",
+      "timestamp": "2026-01-28T20:43:30.809Z",
+      "featureName": "",
+      "featureId": "feature-1769632837999-s1bne2tij"
+    },
+    {
+      "id": "evt-1769632838152-fe20505d",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T20:40:38.152Z",
+      "featureId": "feature-1769632837999-s1bne2tij"
+    },
+    {
+      "id": "evt-1769632371907-7d01897c",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T20:32:51.907Z",
+      "featureName": "Refactor ticket detail page with component architecture",
+      "featureId": "feature-1769630602978-uq7eqjt34"
+    },
+    {
+      "id": "evt-1769632327406-7a50be5f",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T20:32:07.406Z",
+      "featureId": "feature-1769632327267-1a8g7wb5k"
+    },
+    {
+      "id": "evt-1769631591687-7f3f5728",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T20:19:51.687Z",
+      "featureName": "Refactor ticket detail page with component architecture",
+      "featureId": "feature-1769630602978-uq7eqjt34"
+    },
+    {
+      "id": "evt-1769631177552-9c649a41",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-28T20:12:57.552Z",
+      "featureName": "Refactor ticket detail page with component architecture",
+      "featureId": "feature-1769630602978-uq7eqjt34"
+    },
+    {
+      "id": "evt-1769630603134-5b495a6e",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-28T20:03:23.134Z",
+      "featureId": "feature-1769630602978-uq7eqjt34"
+    },
+    {
       "id": "evt-1769622802266-f655a4a8",
       "trigger": "feature_success",
       "timestamp": "2026-01-28T17:53:22.266Z",

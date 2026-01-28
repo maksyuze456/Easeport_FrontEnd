@@ -37,3 +37,14 @@
     color: var(--mantine-color-white);
   }
 }
+
+/* Mobile responsive styling for hamburger menu */
+@media (max-width: 575px) {
+  .inner {
+    padding: 0 16px;
+  }
+
+  .logo {
+    font-size: var(--mantine-font-size-md);
+  }
+}

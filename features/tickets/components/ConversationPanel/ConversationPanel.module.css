@@ -1,0 +1,320 @@
+/* ConversationPanel Component Styles */
+/* Uses 8px grid system for consistent spacing */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-radius: var(--mantine-radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--mantine-color-gray-2);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  background: var(--mantine-color-gray-0);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mantine-color-dark-7);
+  margin: 0;
+}
+
+.messageCount {
+  font-size: 0.75rem;
+  color: var(--mantine-color-dimmed);
+  font-weight: 400;
+}
+
+/* Messages List */
+.messagesList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 400px;
+  max-height: 500px;
+}
+
+/* Individual Message */
+.messageWrapper {
+  display: flex;
+  width: 100%;
+}
+
+.messageWrapperOwn {
+  justify-content: flex-end;
+}
+
+.messageWrapperOther {
+  justify-content: flex-start;
+}
+
+.message {
+  max-width: 75%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Reply Context */
+.replyContext {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-left: 3px solid var(--mantine-color-blue-4);
+  background: var(--mantine-color-gray-0);
+  border-radius: 0 var(--mantine-radius-sm) var(--mantine-radius-sm) 0;
+}
+
+.replyLabel {
+  font-size: 0.6875rem;
+  color: var(--mantine-color-dimmed);
+  margin-bottom: 2px;
+}
+
+.replyBody {
+  font-size: 0.8125rem;
+  color: var(--mantine-color-dark-5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+/* Message Bubble */
+.messageBubble {
+  padding: 12px 16px;
+  border-radius: 16px;
+  transition: box-shadow 200ms ease;
+}
+
+.messageBubbleOwn {
+  background: linear-gradient(135deg, var(--mantine-color-blue-5), var(--mantine-color-blue-6));
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.messageBubbleOther {
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-dark-7);
+  border-bottom-left-radius: 4px;
+}
+
+.messageBubble:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.messageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.messageSender {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.replyButton {
+  font-size: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+  padding: 2px 6px;
+  border-radius: var(--mantine-radius-xs);
+}
+
+.replyButton:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.replyButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.replyButtonOwn {
+  color: white;
+}
+
+.replyButtonOther {
+  color: var(--mantine-color-blue-6);
+}
+
+.messageBody {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.messageTime {
+  font-size: 0.6875rem;
+  opacity: 0.7;
+  margin-top: 6px;
+  text-align: right;
+}
+
+/* Reply Form */
+.replyForm {
+  padding: 16px 20px;
+  border-top: 1px solid var(--mantine-color-gray-2);
+  background: var(--mantine-color-gray-0);
+}
+
+.replyPreview {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: white;
+  border-left: 3px solid var(--mantine-color-blue-5);
+  border-radius: 0 var(--mantine-radius-sm) var(--mantine-radius-sm) 0;
+  animation: slideIn 180ms ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.replyPreviewContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.replyPreviewLabel {
+  font-size: 0.6875rem;
+  color: var(--mantine-color-blue-6);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.replyPreviewBody {
+  font-size: 0.8125rem;
+  color: var(--mantine-color-dark-5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cancelReplyButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--mantine-radius-xs);
+  color: var(--mantine-color-gray-6);
+  transition: all 200ms ease;
+  flex-shrink: 0;
+}
+
+.cancelReplyButton:hover {
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-dark-5);
+}
+
+.cancelReplyButton:focus-visible {
+  outline: 2px solid var(--mantine-color-blue-5);
+  outline-offset: 2px;
+}
+
+.textareaWrapper {
+  margin-bottom: 12px;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-size: 0.9375rem;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Closed state */
+.closedBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-dimmed);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--mantine-color-dimmed);
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: var(--mantine-color-dimmed);
+}
+
+.emptyIcon {
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .messagesList {
+    padding: 16px;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+
+  .replyForm {
+    padding: 12px 16px;
+  }
+}

@@ -1,7 +1,7 @@
 {
   "category": "Uncategorized",
   "description": "Create app spec, and get context of the app, its a front end app ticket management tool with spring boot java backend",
-  "title": "",
+  "title": "Create app specification and gather context",
   "images": [],
   "imagePaths": [],
   "textFilePaths": [],
@@ -15,7 +15,7 @@
   "requirePlanApproval": false,
   "dependencies": [],
   "workMode": "current",
-  "titleGenerating": "Create app spec, and get context of the app, its a front end app ticket management tool with spring boot java backend",
+  "titleGenerating": false,
   "status": "in_progress",
   "id": "feature-1769620832767-ywax5k7h4",
   "descriptionHistory": [

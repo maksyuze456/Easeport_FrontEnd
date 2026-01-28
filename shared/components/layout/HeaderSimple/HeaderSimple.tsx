@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Burger, Container, Group, Flex } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import classes from './HeaderSimple.module.css';
 import { NotificationBell, Notification } from '../../../../features/notifications';
@@ -14,10 +13,11 @@ const links = [
 type HeaderSimpleProps = {
   notifications?: Notification[];
   notificationsLoading?: boolean;
+  mobileOpened?: boolean;
+  toggleMobile?: () => void;
 };
 
-export function HeaderSimple({ notifications, notificationsLoading }: HeaderSimpleProps) {
-  const [opened, { toggle }] = useDisclosure(false);
+export function HeaderSimple({ notifications, notificationsLoading, mobileOpened = false, toggleMobile }: HeaderSimpleProps) {
   const [active, setActive] = useState(links[0].link);
   const router = useRouter();
 
@@ -49,7 +49,13 @@ export function HeaderSimple({ notifications, notificationsLoading }: HeaderSimp
           {items}
         </Group>
 
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+        <Burger
+          opened={mobileOpened}
+          onClick={toggleMobile}
+          hiddenFrom="xs"
+          size="sm"
+          aria-label="Toggle navigation"
+        />
       </Container>
     </header>
   );
