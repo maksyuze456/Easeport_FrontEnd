@@ -3,7 +3,6 @@ import { StompTransport } from "./StompTransport"
 
 function buildWsUrl(base: string | undefined): string {
     const raw = base ?? "ws://localhost:8080"
-    // Convert http(s):// to ws(s):// if needed
     const wsUrl = raw
         .replace(/^https:\/\//, "wss://")
         .replace(/^http:\/\//, "ws://")
@@ -12,10 +11,9 @@ function buildWsUrl(base: string | undefined): string {
 
 class WsClient {
     private transport: StompTransport | null = null
-    private connected = false
 
     connect() {
-        if (this.connected) return
+        if (this.transport) return
 
         const brokerURL = buildWsUrl(process.env.NEXT_PUBLIC_WS_URL)
         this.transport = new StompTransport(brokerURL)
@@ -31,11 +29,10 @@ class WsClient {
         if (!this.transport) return
         this.transport.disconnect()
         this.transport = null
-        this.connected = false
     }
 
     isConnected() {
-        return this.transport?.isConnected
+        return this.transport?.isConnected() ?? false
     }
 }
 
