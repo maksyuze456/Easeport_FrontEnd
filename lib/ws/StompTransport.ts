@@ -35,7 +35,8 @@ export class StompTransport {
         }
 
         this.client.onDisconnect = () => {
-            this.connected = false;
+            this.connected = false
+            this.clearStaleSubscriptions()
         }
 
         this.client.onStompError = (frame) => {
@@ -44,7 +45,14 @@ export class StompTransport {
 
         this.client.onWebSocketClose = () => {
             this.connected = false
+            this.clearStaleSubscriptions()
         }
+    }
+
+    private clearStaleSubscriptions() {
+        this.subscriptions.forEach((entry) => {
+            entry.sub = undefined
+        })
     }
 
     connect() {

@@ -2,6 +2,13 @@
   "version": 1,
   "events": [
     {
+      "id": "evt-1769885262603-3dd4052f",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-31T18:47:42.603Z",
+      "featureName": "Fix mobile WebSocket connectivity with secure cookie handling",
+      "featureId": "feature-1769882329693-ib9069typ"
+    },
+    {
       "id": "evt-1769884405682-a7c8fcb6",
       "trigger": "feature_success",
       "timestamp": "2026-01-31T18:33:25.682Z",
