@@ -2,6 +2,19 @@
   "version": 1,
   "events": [
     {
+      "id": "evt-1769882619309-0e99a0c9",
+      "trigger": "feature_success",
+      "timestamp": "2026-01-31T18:03:39.309Z",
+      "featureName": "",
+      "featureId": "feature-1769882329693-ib9069typ"
+    },
+    {
+      "id": "evt-1769882329880-6d45ed28",
+      "trigger": "feature_created",
+      "timestamp": "2026-01-31T17:58:49.880Z",
+      "featureId": "feature-1769882329693-ib9069typ"
+    },
+    {
       "id": "evt-1769636953774-36dff133",
       "trigger": "feature_success",
       "timestamp": "2026-01-28T21:49:13.774Z",

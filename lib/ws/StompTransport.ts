@@ -1,5 +1,4 @@
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs"
-import SockJS from "sockjs-client"
 
 export type MessageHandler = (topic: string, payload: string) => void
 
@@ -12,11 +11,12 @@ export class StompTransport {
     >()
     private connected = false
 
-    constructor(private url: string) {
+    constructor(private brokerURL: string) {
         this.client = new Client({
-            webSocketFactory: () => new SockJS(url),
+            brokerURL,
             heartbeatIncoming: 10000,
             heartbeatOutgoing: 10000,
+            reconnectDelay: 5000,
             debug: (msg) => console.log("[STOMP]", msg)
         })
 
@@ -36,6 +36,14 @@ export class StompTransport {
 
         this.client.onDisconnect = () => {
             this.connected = false;
+        }
+
+        this.client.onStompError = (frame) => {
+            console.error("[STOMP] Error:", frame.headers["message"], frame.body)
+        }
+
+        this.client.onWebSocketClose = () => {
+            this.connected = false
         }
     }
 

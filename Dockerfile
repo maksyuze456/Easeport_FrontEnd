@@ -5,6 +5,9 @@ WORKDIR /app
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
+ARG NEXT_PUBLIC_WS_URL
+ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
+
 RUN echo "========================================="
 RUN echo "Building with NEXT_PUBLIC_API_URL: '$NEXT_PUBLIC_API_URL'"
 RUN echo "========================================="
