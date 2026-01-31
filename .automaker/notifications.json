@@ -152,6 +152,28 @@
       "dismissed": false,
       "featureId": "feature-1769882329693-ib9069typ",
       "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend"
+    },
+    {
+      "id": "511b5be1-e83c-4d7b-80f8-5f8758ae9a83",
+      "type": "feature_waiting_approval",
+      "title": "Feature Ready for Review",
+      "message": "\"feature-1769882329693-ib9069typ\" is ready for your review and approval.",
+      "createdAt": "2026-01-31T19:07:12.366Z",
+      "read": false,
+      "dismissed": false,
+      "featureId": "feature-1769882329693-ib9069typ",
+      "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend"
+    },
+    {
+      "id": "aa374a26-f223-49bc-b915-8d1808eee7de",
+      "type": "feature_waiting_approval",
+      "title": "Feature Ready for Review",
+      "message": "\"feature-1769882329693-ib9069typ\" is ready for your review and approval.",
+      "createdAt": "2026-01-31T19:17:44.428Z",
+      "read": false,
+      "dismissed": false,
+      "featureId": "feature-1769882329693-ib9069typ",
+      "projectPath": "C:\\Users\\Maksym\\Desktop\\easeportFrontend"
     }
   ]
 }
