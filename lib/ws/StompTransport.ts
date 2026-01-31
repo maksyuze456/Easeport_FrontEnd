@@ -22,16 +22,7 @@ export class StompTransport {
 
         this.client.onConnect = () => {
             this.connected = true
-
-            this.subscriptions.forEach((entry, topic) => {
-                if (entry.sub) return
-
-                const stompSub = this.client.subscribe(topic, (msg: IMessage) => {
-                    entry.cb(msg.body)
-                })
-
-                entry.sub = stompSub
-            })
+            this.activateSubscriptions()
         }
 
         this.client.onDisconnect = () => {
@@ -47,6 +38,18 @@ export class StompTransport {
             this.connected = false
             this.clearStaleSubscriptions()
         }
+    }
+
+    private activateSubscriptions() {
+        this.subscriptions.forEach((entry, topic) => {
+            if (entry.sub) return
+
+            const stompSub = this.client.subscribe(topic, (msg: IMessage) => {
+                entry.cb(msg.body)
+            })
+
+            entry.sub = stompSub
+        })
     }
 
     private clearStaleSubscriptions() {
@@ -74,21 +77,30 @@ export class StompTransport {
     }
 
     subscribe(topic: string, cb: (msg: string) => void) {
-        if (this.subscriptions.has(topic)) return () => { }
+        // If topic already exists, unsubscribe the old one first so we can
+        // replace it with a fresh callback (handles re-mounts cleanly)
+        const existing = this.subscriptions.get(topic)
+        if (existing?.sub) {
+            existing.sub.unsubscribe()
+        }
 
         this.subscriptions.set(topic, { cb })
 
-        if (!this.connected) return () => { }
-
-        const stompSub = this.client.subscribe(topic, (msg: IMessage) => {
-            cb(msg.body)
-        })
-
-        this.subscriptions.get(topic)!.sub = stompSub
+        // If already connected, subscribe to STOMP immediately
+        if (this.connected) {
+            const stompSub = this.client.subscribe(topic, (msg: IMessage) => {
+                cb(msg.body)
+            })
+            this.subscriptions.get(topic)!.sub = stompSub
+        }
+        // If not connected yet, onConnect will pick it up from the map
 
         return () => {
-            stompSub.unsubscribe()
-            this.subscriptions.delete(topic)
+            const entry = this.subscriptions.get(topic)
+            if (entry) {
+                entry.sub?.unsubscribe()
+                this.subscriptions.delete(topic)
+            }
         }
     }
 }
